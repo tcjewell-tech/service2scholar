@@ -1,0 +1,149 @@
+import { Link } from 'expo-router';
+import { useState } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
+
+import { ProfileHeader } from '@/components/profile-header';
+import { ThemedText } from '@/components/themed-text';
+import { Card, Chip, Notice, Row, Screen } from '@/components/ui';
+import { Spacing } from '@/constants/theme';
+import { useCostedMatches, type CostedMatch } from '@/hooks/use-plan';
+import { useTheme } from '@/hooks/use-theme';
+import { formatUsd } from '@/lib/costCalculator';
+import { useActiveProfile } from '@/store';
+
+type Sort = 'cost' | 'match';
+
+export default function MatchesScreen() {
+  const profile = useActiveProfile();
+  const costed = useCostedMatches(profile);
+  const [sort, setSort] = useState<Sort>('cost');
+  const [field, setField] = useState<string | null>(null);
+
+  if (!profile) return null;
+
+  const fields = [...new Map(costed.map((c) => [c.match.cip, c.match.fieldName])).entries()];
+  const filtered = field ? costed.filter((c) => c.match.cip === field) : costed;
+  // Rank by what the user owes the school, not net cost: a big-city housing allowance would
+  // otherwise float expensive cities to the top even though rent there eats it.
+  const sorted = [...filtered].sort((a, b) =>
+    sort === 'cost'
+      ? a.cost.tuitionOutOfPocket - b.cost.tuitionOutOfPocket || b.match.score - a.match.score
+      : b.match.score - a.match.score
+  );
+
+  return (
+    <Screen>
+      <ProfileHeader />
+      <Notice>
+        Sample data: school costs, Yellow Ribbon amounts and outcomes are approximate. For-profit schools are left out.
+      </Notice>
+
+      {costed.length === 0 ? (
+        <Card>
+          <ThemedText style={{ fontWeight: 600 }}>No matches yet</ThemedText>
+          <ThemedText themeColor="textSecondary">
+            Add a secondary job code, more skills, or fields of interest in Profiles to widen your matches.
+          </ThemedText>
+        </Card>
+      ) : (
+        <>
+          <Row>
+            <Chip label="Lowest cost to you" selected={sort === 'cost'} onPress={() => setSort('cost')} />
+            <Chip label="Best match" selected={sort === 'match'} onPress={() => setSort('match')} />
+          </Row>
+          <Row>
+            <Chip label={`All fields (${costed.length})`} selected={!field} onPress={() => setField(null)} />
+            {fields.map(([cip, name]) => (
+              <Chip key={cip} label={name} selected={field === cip} onPress={() => setField(field === cip ? null : cip)} />
+            ))}
+          </Row>
+          {sorted.map((c) => (
+            <MatchCard key={c.match.key} item={c} saved={profile.savedProgramKeys.includes(c.match.key)} />
+          ))}
+        </>
+      )}
+    </Screen>
+  );
+}
+
+function MatchCard({ item, saved }: { item: CostedMatch; saved: boolean }) {
+  const theme = useTheme();
+  const { match, cost } = item;
+  const surplus = cost.netCost < 0;
+
+  return (
+    <Link href={{ pathname: '/program/[key]', params: { key: match.key } }} asChild>
+      <Pressable style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1 })}>
+        <Card>
+          <View style={styles.top}>
+            <View style={{ flex: 1, gap: 2 }}>
+              <ThemedText type="small" themeColor="textSecondary">
+                {match.school.name}
+                {match.school.onlineOnly ? ' · Online' : ` · ${match.school.city}, ${match.school.state}`}
+              </ThemedText>
+              <ThemedText style={{ fontWeight: 700, fontSize: 17 }}>{match.fieldName}</ThemedText>
+            </View>
+            {saved ? (
+              <ThemedText type="smallBold" style={{ color: theme.accent }}>
+                ★ In plan
+              </ThemedText>
+            ) : null}
+          </View>
+
+          <View style={styles.figures}>
+            <Figure label="You pay (tuition)" value={formatUsd(cost.tuitionOutOfPocket)} strong={cost.tuitionOutOfPocket === 0} />
+            <Figure label="Paid to you" value={formatUsd(cost.mha + cost.books)} />
+            <Figure
+              label={surplus ? 'Left over / yr' : 'Net cost / yr'}
+              value={formatUsd(Math.abs(cost.netCost))}
+              color={surplus ? theme.success : theme.text}
+            />
+          </View>
+
+          <Row style={{ gap: Spacing.one }}>
+            {cost.yellowRibbonEligible ? <Tag text="Yellow Ribbon" /> : null}
+            {match.school.control === 'public' ? <Tag text="Public" /> : <Tag text="Private nonprofit" />}
+            {match.school.veteranGradRate != null ? (
+              <Tag text={`${Math.round(match.school.veteranGradRate * 100)}% vet grad rate`} />
+            ) : null}
+          </Row>
+          <ThemedText type="small" themeColor="textSecondary" numberOfLines={2}>
+            Why: {match.reasons[0]}
+            {match.reasons.length > 1 ? ` (+${match.reasons.length - 1} more)` : ''}
+          </ThemedText>
+        </Card>
+      </Pressable>
+    </Link>
+  );
+}
+
+function Figure({ label, value, strong, color }: { label: string; value: string; strong?: boolean; color?: string }) {
+  const theme = useTheme();
+  return (
+    <View style={{ flex: 1 }}>
+      <ThemedText type="small" themeColor="textSecondary">
+        {label}
+      </ThemedText>
+      <ThemedText style={{ fontWeight: 700, fontSize: 18, color: color ?? (strong ? theme.success : theme.text) }}>
+        {value}
+      </ThemedText>
+    </View>
+  );
+}
+
+function Tag({ text }: { text: string }) {
+  const theme = useTheme();
+  return (
+    <View style={[styles.tag, { backgroundColor: theme.backgroundSelected }]}>
+      <ThemedText type="small" style={{ fontSize: 12, lineHeight: 16 }}>
+        {text}
+      </ThemedText>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  top: { flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.two },
+  figures: { flexDirection: 'row', gap: Spacing.two },
+  tag: { borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 },
+});

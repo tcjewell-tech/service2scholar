@@ -1,3 +1,4 @@
+import gids from './live/gids.json';
 import { BENEFIT_RATES } from './seed/benefitRates';
 import { CIP_FIELDS, CIP_NAME, CUSTOM_CROSSOVER, KSBP_KEYWORDS, SOC_TITLES, SOC_TO_CIP } from './seed/fields';
 import { JOB_CODES } from './seed/jobCodes';
@@ -45,4 +46,21 @@ export const seedRepository: DataRepository = {
   rates: BENEFIT_RATES,
 };
 
-export const data = seedRepository;
+/** A snapshot written by scripts/refresh-data.js: real VA figures for the seed's schools. */
+export interface GidsSnapshot {
+  fetchedAt: string;
+  schools: Record<string, Partial<School>>;
+  mhaByZip: Record<string, number>;
+}
+
+/** Lays VA GI Bill Comparison Tool figures over a repository's schools and housing table. */
+export function withGids(repo: DataRepository, live: GidsSnapshot): DataRepository {
+  return {
+    ...repo,
+    schools: repo.schools.map((s) => ({ ...s, ...live.schools[s.id] })),
+    rates: { ...repo.rates, mhaByZip: { ...repo.rates.mhaByZip, ...live.mhaByZip } },
+  };
+}
+
+export const schoolDataAsOf = gids.fetchedAt;
+export const data = withGids(seedRepository, gids as GidsSnapshot);

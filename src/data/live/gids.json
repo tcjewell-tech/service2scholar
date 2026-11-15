@@ -1,0 +1,497 @@
+{
+  "source": "VA GI Bill Comparison Tool",
+  "fetchedAt": "2026-11-15",
+  "schools": {
+    "syracuse": {
+      "zip": "13244",
+      "control": "private_nonprofit",
+      "yellowRibbon": {
+        "participates": true,
+        "maxPerStudent": null,
+        "maxByLevel": {
+          "bachelor": null,
+          "master": null
+        },
+        "levels": [
+          "bachelor",
+          "master"
+        ]
+      },
+      "tuitionInState": 63061,
+      "tuitionOutOfState": 63061,
+      "fees": 0
+    },
+    "usc": {
+      "zip": "90089",
+      "control": "private_nonprofit",
+      "yellowRibbon": {
+        "participates": true,
+        "maxPerStudent": 5000,
+        "maxByLevel": {
+          "bachelor": null,
+          "master": 5000
+        },
+        "levels": [
+          "bachelor",
+          "master"
+        ]
+      },
+      "tuitionInState": 68237,
+      "tuitionOutOfState": 68237,
+      "fees": 0
+    },
+    "georgetown": {
+      "zip": "20057",
+      "control": "private_nonprofit",
+      "yellowRibbon": {
+        "participates": true,
+        "maxPerStudent": 18156.45,
+        "maxByLevel": {
+          "bachelor": 24162,
+          "master": 18156.45
+        },
+        "levels": [
+          "bachelor",
+          "master"
+        ]
+      },
+      "tuitionInState": 65081,
+      "tuitionOutOfState": 65081,
+      "fees": 0
+    },
+    "columbia-gs": {
+      "zip": "10027",
+      "control": "private_nonprofit",
+      "yellowRibbon": {
+        "participates": true,
+        "maxPerStudent": 5000,
+        "maxByLevel": {
+          "bachelor": null,
+          "master": 5000
+        },
+        "levels": [
+          "bachelor",
+          "master"
+        ]
+      },
+      "tuitionInState": 69045,
+      "tuitionOutOfState": 69045,
+      "fees": 0
+    },
+    "gwu": {
+      "zip": "20052",
+      "control": "private_nonprofit",
+      "yellowRibbon": {
+        "participates": true,
+        "maxPerStudent": 17750,
+        "maxByLevel": {
+          "bachelor": 26500,
+          "master": 17750
+        },
+        "levels": [
+          "bachelor",
+          "master"
+        ]
+      },
+      "tuitionInState": 64990,
+      "tuitionOutOfState": 64990,
+      "fees": 0
+    },
+    "norwich": {
+      "zip": "05663",
+      "control": "private_nonprofit",
+      "yellowRibbon": {
+        "participates": true,
+        "maxPerStudent": null,
+        "maxByLevel": {
+          "bachelor": null,
+          "master": null
+        },
+        "levels": [
+          "bachelor",
+          "master"
+        ]
+      },
+      "tuitionInState": 49600,
+      "tuitionOutOfState": 49600,
+      "fees": 0
+    },
+    "erau-db": {
+      "zip": "32114",
+      "control": "private_nonprofit",
+      "yellowRibbon": {
+        "participates": true,
+        "maxPerStudent": 16250,
+        "maxByLevel": {
+          "bachelor": 16250,
+          "master": 16250
+        },
+        "levels": [
+          "bachelor",
+          "master"
+        ]
+      },
+      "tuitionInState": 42304,
+      "tuitionOutOfState": 42304,
+      "fees": 0
+    },
+    "erau-ww": {
+      "zip": "32114",
+      "control": "private_nonprofit",
+      "yellowRibbon": {
+        "participates": true,
+        "maxPerStudent": 50000,
+        "maxByLevel": {
+          "bachelor": 50000,
+          "master": 50000
+        },
+        "levels": [
+          "bachelor",
+          "master"
+        ]
+      }
+    },
+    "hpu": {
+      "zip": "96813",
+      "control": "private_nonprofit",
+      "yellowRibbon": {
+        "participates": true,
+        "maxPerStudent": 1000,
+        "maxByLevel": {
+          "bachelor": 17000,
+          "master": 1000
+        },
+        "levels": [
+          "bachelor",
+          "master"
+        ]
+      },
+      "tuitionInState": 33020,
+      "tuitionOutOfState": 33020,
+      "fees": 0
+    },
+    "snhu": {
+      "zip": "03106",
+      "control": "private_nonprofit",
+      "yellowRibbon": {
+        "participates": true,
+        "maxPerStudent": 7500,
+        "maxByLevel": {
+          "bachelor": 7500,
+          "master": 7500
+        },
+        "levels": [
+          "bachelor",
+          "master"
+        ]
+      },
+      "tuitionInState": 16450,
+      "tuitionOutOfState": 16450,
+      "fees": 0
+    },
+    "excelsior": {
+      "zip": "12203",
+      "control": "private_nonprofit",
+      "yellowRibbon": {
+        "participates": true,
+        "maxPerStudent": 500,
+        "maxByLevel": {
+          "bachelor": 500,
+          "master": 500
+        },
+        "levels": [
+          "bachelor",
+          "master"
+        ]
+      }
+    },
+    "tamu": {
+      "zip": "77843",
+      "control": "public",
+      "yellowRibbon": {
+        "participates": true,
+        "maxPerStudent": 10000,
+        "maxByLevel": {
+          "bachelor": 10000,
+          "master": 10000
+        },
+        "levels": [
+          "bachelor",
+          "master"
+        ]
+      },
+      "tuitionInState": 13099,
+      "tuitionOutOfState": 40328,
+      "fees": 0
+    },
+    "asu": {
+      "zip": "85287",
+      "control": "public",
+      "yellowRibbon": {
+        "participates": true,
+        "maxPerStudent": null,
+        "maxByLevel": {
+          "bachelor": null,
+          "master": null
+        },
+        "levels": [
+          "bachelor",
+          "master"
+        ]
+      },
+      "tuitionInState": 12051,
+      "tuitionOutOfState": 32193,
+      "fees": 0
+    },
+    "asu-online": {
+      "zip": "85287",
+      "control": "public",
+      "yellowRibbon": {
+        "participates": true,
+        "maxPerStudent": null,
+        "maxByLevel": {
+          "bachelor": null,
+          "master": null
+        },
+        "levels": [
+          "bachelor",
+          "master"
+        ]
+      }
+    },
+    "umgc": {
+      "zip": "20783",
+      "control": "public",
+      "yellowRibbon": {
+        "participates": true,
+        "maxPerStudent": null,
+        "maxByLevel": {
+          "bachelor": null,
+          "master": null
+        },
+        "levels": [
+          "bachelor",
+          "master"
+        ]
+      },
+      "tuitionInState": 7992,
+      "tuitionOutOfState": 12336,
+      "fees": 0
+    },
+    "psu-world": {
+      "zip": "16802",
+      "control": "public",
+      "yellowRibbon": {
+        "participates": false,
+        "maxPerStudent": null,
+        "maxByLevel": {},
+        "levels": []
+      },
+      "tuitionInState": 15204,
+      "tuitionOutOfState": 15204,
+      "fees": 0
+    },
+    "purdue": {
+      "zip": "47906",
+      "control": "public",
+      "yellowRibbon": {
+        "participates": true,
+        "maxPerStudent": 7000,
+        "maxByLevel": {
+          "bachelor": 7000,
+          "master": 7000
+        },
+        "levels": [
+          "bachelor",
+          "master"
+        ]
+      },
+      "tuitionInState": 9992,
+      "tuitionOutOfState": 28794,
+      "fees": 0
+    },
+    "vt": {
+      "zip": "24061",
+      "control": "public",
+      "yellowRibbon": {
+        "participates": false,
+        "maxPerStudent": null,
+        "maxByLevel": {},
+        "levels": []
+      },
+      "tuitionInState": 15478,
+      "tuitionOutOfState": 36694,
+      "fees": 0
+    },
+    "odu": {
+      "zip": "23529",
+      "control": "public",
+      "yellowRibbon": {
+        "participates": true,
+        "maxPerStudent": 2500,
+        "maxByLevel": {
+          "master": 2500
+        },
+        "levels": [
+          "master"
+        ]
+      },
+      "tuitionInState": 12262,
+      "tuitionOutOfState": 32662,
+      "fees": 0
+    },
+    "uncw": {
+      "zip": "28403",
+      "control": "public",
+      "yellowRibbon": {
+        "participates": false,
+        "maxPerStudent": null,
+        "maxByLevel": {},
+        "levels": []
+      },
+      "tuitionInState": 7317,
+      "tuitionOutOfState": 22985,
+      "fees": 0
+    },
+    "uccs": {
+      "zip": "80918",
+      "control": "public",
+      "yellowRibbon": {
+        "participates": true,
+        "maxPerStudent": 6500,
+        "maxByLevel": {
+          "bachelor": 6500,
+          "master": 6500
+        },
+        "levels": [
+          "bachelor",
+          "master"
+        ]
+      },
+      "tuitionInState": 9712,
+      "tuitionOutOfState": 20492,
+      "fees": 0
+    },
+    "sdsu": {
+      "zip": "92182",
+      "control": "public",
+      "yellowRibbon": {
+        "participates": false,
+        "maxPerStudent": null,
+        "maxByLevel": {},
+        "levels": []
+      },
+      "tuitionInState": 8290,
+      "tuitionOutOfState": 20170,
+      "fees": 0
+    },
+    "uw-tacoma": {
+      "zip": "98402",
+      "control": "public",
+      "yellowRibbon": {
+        "participates": false,
+        "maxPerStudent": null,
+        "maxByLevel": {},
+        "levels": []
+      },
+      "tuitionInState": 12817,
+      "tuitionOutOfState": 42171,
+      "fees": 0
+    },
+    "utsa": {
+      "zip": "78249",
+      "control": "public",
+      "yellowRibbon": {
+        "participates": false,
+        "maxPerStudent": null,
+        "maxByLevel": {},
+        "levels": []
+      },
+      "tuitionInState": 8991,
+      "tuitionOutOfState": 21965,
+      "fees": 0
+    },
+    "uopx": {
+      "zip": "85040",
+      "control": "for_profit",
+      "yellowRibbon": {
+        "participates": true,
+        "maxPerStudent": null,
+        "maxByLevel": {
+          "bachelor": null,
+          "master": null
+        },
+        "levels": [
+          "bachelor",
+          "master"
+        ]
+      },
+      "tuitionInState": 9552,
+      "tuitionOutOfState": 9552,
+      "fees": 0
+    },
+    "ctu": {
+      "zip": "80907",
+      "control": "for_profit",
+      "yellowRibbon": {
+        "participates": true,
+        "maxPerStudent": null,
+        "maxByLevel": {
+          "bachelor": null,
+          "master": null
+        },
+        "levels": [
+          "bachelor",
+          "master"
+        ]
+      },
+      "tuitionInState": 12760,
+      "tuitionOutOfState": 12760,
+      "fees": 0
+    },
+    "apus": {
+      "zip": "25414",
+      "control": "for_profit",
+      "yellowRibbon": {
+        "participates": true,
+        "maxPerStudent": null,
+        "maxByLevel": {
+          "bachelor": null
+        },
+        "levels": [
+          "bachelor"
+        ]
+      },
+      "tuitionInState": 8400,
+      "tuitionOutOfState": 8400,
+      "fees": 0
+    }
+  },
+  "mhaByZip": {
+    "10027": 5070,
+    "12203": 2634,
+    "13244": 2049,
+    "16802": 1791,
+    "20052": 3132,
+    "20057": 3132,
+    "20783": 3132,
+    "23529": 2430,
+    "24061": 1890,
+    "25414": 2058,
+    "28403": 2040,
+    "32114": 2286,
+    "47906": 1752,
+    "77843": 1758,
+    "78249": 1869,
+    "80907": 2358,
+    "80918": 2358,
+    "85040": 2289,
+    "85287": 2289,
+    "90089": 3882,
+    "92182": 3975,
+    "96813": 3663,
+    "98402": 2556,
+    "05663": 3120,
+    "03106": 3177
+  }
+}

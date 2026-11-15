@@ -35,7 +35,7 @@ export default function MatchesScreen() {
     <Screen>
       <ProfileHeader />
       <Notice>
-        Sample data: school costs, Yellow Ribbon amounts and outcomes are approximate. For-profit schools are left out.
+        School costs, Yellow Ribbon and housing rates are VA figures. Program lists and graduation rates are still sample data. For-profit schools are left out.
       </Notice>
 
       {costed.length === 0 ? (

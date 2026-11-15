@@ -1,5 +1,6 @@
-import { data, seedRepository as repo, withGids, type School } from '@/data';
+import { data, seedRepository as repo, withGids, withOnet, type OnetSnapshot, type School } from '@/data';
 import { estimateCost } from '@/lib/costCalculator';
+import { fieldsForProfile } from '@/lib/matching';
 import { emptyProfile } from '@/lib/profile';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -130,5 +131,61 @@ describe('estimateCost with per-level Yellow Ribbon caps', () => {
     expect(estimateCost(profile, school, 'bachelor', [], repo.rates).tuitionOutOfPocket).toBe(0);
     const gap = 60000 - repo.rates.privateTuitionCap;
     expect(estimateCost(profile, school, 'master', [], repo.rates).tuitionOutOfPocket).toBeCloseTo(gap - 10000, 0);
+  });
+});
+
+describe('withOnet', () => {
+  const live: OnetSnapshot = {
+    jobCodes: {
+      army: {
+        enlisted: [
+          ['11B', 'Infantryman (live)', ['55-3016']],
+          ['99Z', 'New Code', ['15-1212']],
+        ],
+        officer: [['99Z', 'Same Code, Officer', ['11-1021']]],
+      },
+    },
+    socTitles: { '15-1212': 'Information Security Analysts' },
+    // 99.9999 is not a field the app offers and must be dropped.
+    socToCip: { '15-1212': ['11.1003', '99.9999'], '55-3016': ['99.9999'] },
+  };
+  const merged = withOnet(repo, live);
+  const army = (code: string, rank = 'enlisted') =>
+    merged.jobCodes.filter((j) => j.branch === 'army' && j.code === code && j.rankCategory === rank);
+
+  it('replaces same-code seed entries, keeping the picker group, and adds new codes', () => {
+    const seed11B = repo.jobCodes.find((j) => j.branch === 'army' && j.code === '11B')!;
+    expect(army('11B')).toEqual([{ ...seed11B, title: 'Infantryman (live)', soc: ['55-3016'] }]);
+    expect(army('99Z')).toHaveLength(1);
+  });
+
+  it('keeps seed codes the crosswalk does not list', () => {
+    expect(merged.jobCodes.some((j) => j.branch === 'navy' && j.code === '1110')).toBe(true);
+  });
+
+  it('adds only offered fields to the seed occupation links', () => {
+    expect(merged.socToCip['15-1212']).toEqual([...new Set([...(repo.socToCip['15-1212'] ?? []), '11.1003'])]);
+    expect(merged.socToCip['55-3016']).toEqual(repo.socToCip['55-3016']);
+  });
+
+  it('matches a code by the profile rank when two ranks share it', () => {
+    const officer = { ...emptyProfile('self'), branch: 'army' as const, rankCategory: 'officer' as const, primaryCode: '99Z' };
+    const reasons = [...fieldsForProfile(officer, merged).values()].flatMap((f) => f.reasons).join(' ');
+    expect(reasons).toContain('Same Code, Officer');
+    expect(reasons).not.toContain('New Code');
+  });
+});
+
+describe('bundled O*NET snapshot', () => {
+  it('has every branch and unique codes within each branch and rank', () => {
+    const keys = data.jobCodes.map((j) => `${j.branch}/${j.rankCategory}/${j.code}`);
+    expect(new Set(keys).size).toBe(keys.length);
+    expect(new Set(data.jobCodes.map((j) => j.branch)).size).toBe(6);
+    expect(data.jobCodes.length).toBeGreaterThan(10000);
+  });
+
+  it('leads an Army 17C to Cybersecurity', () => {
+    const p = { ...emptyProfile('self'), branch: 'army' as const, primaryCode: '17C' };
+    expect(fieldsForProfile(p, data).has('11.1003')).toBe(true);
   });
 });

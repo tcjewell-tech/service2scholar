@@ -62,7 +62,9 @@ export function fieldsForProfile(profile: Profile, repo: DataRepository): Map<st
   };
 
   const addCode = (code: string, primary: boolean) => {
-    const job = repo.jobCodes.find((j) => j.branch === profile.branch && j.code === code);
+    const job = repo.jobCodes.find(
+      (j) => j.branch === profile.branch && j.code === code && j.rankCategory === profile.rankCategory
+    ) ?? repo.jobCodes.find((j) => j.branch === profile.branch && j.code === code);
     if (job) {
       for (const soc of job.soc) {
         for (const cip of repo.socToCip[soc] ?? []) {

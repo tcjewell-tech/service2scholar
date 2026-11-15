@@ -7,9 +7,9 @@ function rows(branch: JobCode['branch'], rankCategory: JobCode['rankCategory'], 
 }
 
 /**
- * Representative sample of job codes per branch and rank category.
- * SOC links follow the shape of the O*NET Military Crossover Walk; replace with the
- * full crosswalk download when wiring live data.
+ * Hand-entered sample of job codes. live/onet.json (the full O*NET military crosswalk) replaces any
+ * code it also lists; what survives from here is the picker `group` labels and codes the crosswalk
+ * does not map, such as Navy officer designators.
  */
 export const JOB_CODES: JobCode[] = [
   ...rows('army', 'enlisted', [

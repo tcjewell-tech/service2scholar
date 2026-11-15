@@ -57,7 +57,7 @@ export function checklistHtml(
   <table><tr><th>Program</th><th class="num">You pay school</th><th class="num">Paid to you</th><th class="num">Net</th></tr>${programs}</table>` : ''}
   <h2>Checklist</h2>
   <table>${rows}</table>
-  <footer>Estimates use sample data and 2026–27 VA rates. Confirm amounts with each school's certifying official and VA.</footer>
+  <footer>Estimates use VA and College Scorecard school figures, sample scholarship amounts and 2026–27 VA rates. Confirm amounts with each school's certifying official and VA.</footer>
   </body></html>`;
 }
 

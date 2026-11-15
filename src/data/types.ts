@@ -53,6 +53,8 @@ export interface School {
     participates: boolean;
     /** Annual school contribution per student; VA matches it. null = unlimited. */
     maxPerStudent: number | null;
+    /** Per-level cap from VA data (null = unlimited); wins over maxPerStudent when set for a level. */
+    maxByLevel?: Partial<Record<DegreeLevel, number | null>>;
     levels: DegreeLevel[];
   };
   /** Graduation rate for veteran / GI Bill students, 0–1, null if unknown. */

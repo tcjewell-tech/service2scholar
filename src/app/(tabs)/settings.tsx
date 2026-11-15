@@ -5,7 +5,7 @@ import { Alert, Platform, Switch, View } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { Button, Card, Chip, Notice, Row, Screen, SectionLabel } from '@/components/ui';
 import { Spacing } from '@/constants/theme';
-import { data } from '@/data';
+import { data, schoolDataAsOf } from '@/data';
 import { useTheme } from '@/hooks/use-theme';
 import { remindersSupported, sendTestReminder } from '@/lib/notifications';
 import { CATEGORY_LABEL, type ChecklistCategory } from '@/lib/timeline';
@@ -159,7 +159,8 @@ export default function SettingsScreen() {
       <Card>
         <ThemedText type="small" themeColor="textSecondary">
           GI Bill rates for {data.rates.academicYear} (private school cap ${data.rates.privateTuitionCap.toLocaleString('en-US')},
-          online housing ${data.rates.onlineMhaMonthly}/mo). Schools, scholarships and per-ZIP housing rates are sample data.
+          online housing ${data.rates.onlineMhaMonthly}/mo). School tuition, Yellow Ribbon and housing rates come from the VA GI Bill Comparison Tool as of {schoolDataAsOf}.
+          Program lists, veteran graduation rates, application deadlines and scholarships are sample data.
           Job-code mappings follow the O*NET Military Crossover Walk.
         </ThemedText>
         <Button title="VA GI Bill Comparison Tool ↗" variant="ghost" onPress={() => WebBrowser.openBrowserAsync('https://www.va.gov/education/gi-bill-comparison-tool/')} style={{ alignSelf: 'flex-start' }} />

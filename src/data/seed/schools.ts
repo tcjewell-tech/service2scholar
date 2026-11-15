@@ -9,8 +9,9 @@ function progs(list: [cip: string, levels: DegreeLevel[]][]): Program[] {
 }
 
 /**
- * SAMPLE DATA — figures are rounded approximations shaped like the VA GI Bill Comparison
- * Tool and College Scorecard records. Not authoritative; replace with live data before launch.
+ * SAMPLE DATA — rounded approximations. Tuition, fees, Yellow Ribbon, control, ZIP and housing are
+ * overridden with real VA figures from live/gids.json (npm run refresh-data); program lists,
+ * veteran graduation rates and deadlines here are still sample data.
  */
 export const SCHOOLS: School[] = [
   {

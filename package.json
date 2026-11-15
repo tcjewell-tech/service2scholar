@@ -50,7 +50,8 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "test": "jest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "refresh-data": "node scripts/refresh-data.js"
   },
   "private": true,
   "jest": {

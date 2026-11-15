@@ -58,11 +58,12 @@ export function estimateCost(
   const yr = school.yellowRibbon;
   const yellowRibbonEligible =
     profile.giBillTier === 100 && yr.participates && yr.levels.includes(level) && !activeDutySpouse;
+  const yrCap = yr.maxByLevel?.[level] !== undefined ? yr.maxByLevel[level] : yr.maxPerStudent;
   const gap = Math.max(0, charged - giBillTuition);
   const yellowRibbon = yellowRibbonEligible
-    ? yr.maxPerStudent == null
+    ? yrCap == null
       ? gap
-      : Math.min(gap, yr.maxPerStudent * 2)
+      : Math.min(gap, yrCap * 2)
     : 0;
 
   const remaining = Math.max(0, charged - giBillTuition - yellowRibbon);
@@ -100,9 +101,9 @@ export function estimateCost(
       label: 'Yellow Ribbon',
       amount: -yellowRibbon,
       explanation: yellowRibbonEligible
-        ? yr.maxPerStudent == null
+        ? yrCap == null
           ? `${school.name} covers the remaining gap with no cap, with VA matching what the school contributes.`
-          : `${school.name} contributes up to ${usd(yr.maxPerStudent)} a year and VA matches it, covering up to ${usd(yr.maxPerStudent * 2)} of the gap.`
+          : `${school.name} contributes up to ${usd(yrCap)} a year and VA matches it, covering up to ${usd(yrCap * 2)} of the gap.`
         : activeDutySpouse
           ? 'Yellow Ribbon isn’t available to spouses while the sponsor is still on active duty.'
           : `Yellow Ribbon needs the 100% benefit level. At ${pct} this school’s Yellow Ribbon agreement doesn’t apply.`,

@@ -3,7 +3,7 @@ import { estimateCost } from '@/lib/costCalculator';
 import { emptyProfile } from '@/lib/profile';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const { mapInstitution } = require('../scripts/refresh-data');
+const { mapInstitution, mapScorecard } = require('../scripts/refresh-data');
 
 const gids = {
   name: 'TEST U',
@@ -59,6 +59,7 @@ describe('withGids', () => {
     fetchedAt: '2026-11-15',
     schools: { syracuse: { tuitionInState: 1, fees: 0 } },
     mhaByZip: { '13244': 9 },
+    programs: { usc: { bachelor: ['1107', '9999'], master: ['1110'] } },
   };
   const merged = withGids(repo, live);
 
@@ -66,8 +67,40 @@ describe('withGids', () => {
     const before = repo.schools.find((s) => s.id === 'syracuse')!;
     const after = merged.schools.find((s) => s.id === 'syracuse')!;
     expect(after).toEqual({ ...before, tuitionInState: 1, fees: 0 });
-    expect(merged.schools.find((s) => s.id === 'usc')).toEqual(repo.schools.find((s) => s.id === 'usc'));
     expect(merged.rates.mhaByZip['13244']).toBe(9);
+  });
+
+  it('builds program lists from Scorecard CIP families, leaving other schools on the seed list', () => {
+    // 11.0701 Computer Science is in family 1107; 11.1003 Cybersecurity is in family 1110.
+    expect(merged.schools.find((s) => s.id === 'usc')!.programs).toEqual([
+      { cip: '11.0701', levels: ['bachelor'] },
+      { cip: '11.1003', levels: ['master'] },
+    ]);
+    expect(merged.schools.find((s) => s.id === 'syracuse')!.programs).toEqual(repo.schools.find((s) => s.id === 'syracuse')!.programs);
+  });
+});
+
+describe('mapScorecard (College Scorecard record -> tuition and program families)', () => {
+  const record = {
+    id: 1,
+    'latest.cost.tuition.in_state': 12000,
+    'latest.cost.tuition.out_of_state': 30000,
+    'latest.programs.cip_4_digit': [
+      { code: '1107', credential: { level: 3 } },
+      { code: '1107', credential: { level: 3 } },
+      { code: '1107', credential: { level: 5 } },
+      { code: '5202', credential: { level: 2 } },
+      { code: '5202', credential: { level: 6 } },
+    ],
+  };
+
+  it("keeps only bachelor's and master's programs, without duplicates", () => {
+    expect(mapScorecard(record).programs).toEqual({ bachelor: ['1107'], master: ['1107'] });
+  });
+
+  it('takes tuition only when both figures are published', () => {
+    expect(mapScorecard(record).tuition).toEqual({ tuitionInState: 12000, tuitionOutOfState: 30000, fees: 0 });
+    expect(mapScorecard({ ...record, 'latest.cost.tuition.in_state': null }).tuition).toEqual({});
   });
 });
 
@@ -76,6 +109,7 @@ describe('bundled snapshot', () => {
     for (const s of data.schools) {
       expect(data.rates.mhaByZip[s.zip]).toBeGreaterThan(0);
       expect(s.tuitionInState).toBeGreaterThan(0);
+      expect(s.programs.length).toBeGreaterThan(0);
     }
     expect(data.schools.find((s) => s.id === 'uopx')!.control).toBe('for_profit');
   });

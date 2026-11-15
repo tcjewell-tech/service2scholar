@@ -22,9 +22,13 @@ export default function CodesStep() {
     [draft.branch, draft.rankCategory]
   );
   const q = query.trim().toLowerCase();
-  const visible = q
+  const matching = q
     ? codes.filter((c) => c.code.toLowerCase().includes(q) || c.title.toLowerCase().includes(q))
     : codes;
+  // Some branches have thousands of codes: show the picked ones, then the first matches, and let search narrow it.
+  const picked = (c: JobCode) => c.code === draft.primaryCode || draft.secondaryCodes.includes(c.code);
+  const visible = [...codes.filter(picked), ...matching.filter((c) => !picked(c)).slice(0, MAX_ROWS)];
+  const hidden = matching.filter((c) => !picked(c)).length - MAX_ROWS;
 
   const onPick = (code: string) => {
     if (!draft.primaryCode) {
@@ -94,14 +98,21 @@ export default function CodesStep() {
           })}
         </View>
       ))}
-      {visible.length === 0 ? (
+      {hidden > 0 ? (
         <ThemedText themeColor="textSecondary">
-          No {term}s match “{query}” in the sample list. Pick the closest one, and describe the rest in the next step.
+          {hidden.toLocaleString('en-US')} more {term}s not shown. Search by code or title to find yours.
+        </ThemedText>
+      ) : null}
+      {matching.length === 0 ? (
+        <ThemedText themeColor="textSecondary">
+          No {term}s match “{query}”. Pick the closest one, and describe the rest in the next step.
         </ThemedText>
       ) : null}
     </OnboardingFrame>
   );
 }
+
+const MAX_ROWS = 50;
 
 const styles = StyleSheet.create({
   row: {

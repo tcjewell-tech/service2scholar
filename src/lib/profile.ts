@@ -73,9 +73,9 @@ export function codeTermFor(branch: Branch, rank: RankCategory): string {
   }
 }
 
-/** Branches with no warrant officer codes in the current data. */
+/** Branches with warrant officer codes in the O*NET crosswalk (the Air Force brought warrants back in 2024). */
 export function hasWarrantOfficers(branch: Branch): boolean {
-  return branch !== 'airforce' && branch !== 'spaceforce';
+  return branch !== 'spaceforce';
 }
 
 /**

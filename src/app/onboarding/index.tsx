@@ -45,8 +45,8 @@ export default function WhoStep() {
       />
       {isFirst ? (
         <Notice>
-          This build stores your profile only on this device. Nothing is sent anywhere. School costs come from the VA GI Bill
-          Comparison Tool; program lists and scholarships are sample data for now.
+          This build stores your profile only on this device. Nothing is sent anywhere. School costs and degree fields come
+          from the VA and the College Scorecard; scholarships are sample data for now.
         </Notice>
       ) : null}
     </OnboardingFrame>

@@ -159,8 +159,8 @@ export default function SettingsScreen() {
       <Card>
         <ThemedText type="small" themeColor="textSecondary">
           GI Bill rates for {data.rates.academicYear} (private school cap ${data.rates.privateTuitionCap.toLocaleString('en-US')},
-          online housing ${data.rates.onlineMhaMonthly}/mo). School tuition, Yellow Ribbon and housing rates come from the VA GI Bill Comparison Tool as of {schoolDataAsOf}.
-          Program lists, veteran graduation rates, application deadlines and scholarships are sample data.
+          online housing ${data.rates.onlineMhaMonthly}/mo). Yellow Ribbon and housing rates come from the VA GI Bill Comparison Tool, and tuition and degree fields from
+          the College Scorecard, as of {schoolDataAsOf}. Veteran graduation rates, application deadlines and scholarships are sample data.
           Job-code mappings follow the O*NET Military Crossover Walk.
         </ThemedText>
         <Button title="VA GI Bill Comparison Tool ↗" variant="ghost" onPress={() => WebBrowser.openBrowserAsync('https://www.va.gov/education/gi-bill-comparison-tool/')} style={{ alignSelf: 'flex-start' }} />

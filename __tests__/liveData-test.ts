@@ -1,4 +1,5 @@
 import { data, seedRepository as repo, withGids, withOnet, type OnetSnapshot, type School } from '@/data';
+import onet from '@/data/live/onet.json';
 import { estimateCost } from '@/lib/costCalculator';
 import { fieldsForProfile } from '@/lib/matching';
 import { emptyProfile } from '@/lib/profile';
@@ -182,6 +183,20 @@ describe('bundled O*NET snapshot', () => {
     expect(new Set(keys).size).toBe(keys.length);
     expect(new Set(data.jobCodes.map((j) => j.branch)).size).toBe(6);
     expect(data.jobCodes.length).toBeGreaterThan(10000);
+  });
+
+  it('keeps only the Navy officer designators from the seed', () => {
+    const live = new Set(
+      Object.entries(onet.jobCodes).flatMap(([b, ranks]) => Object.entries(ranks).flatMap(([r, rows]) => rows.map((row) => `${b}/${r}/${row[0]}`)))
+    );
+    const seedOnly = data.jobCodes.filter((j) => !live.has(`${j.branch}/${j.rankCategory}/${j.code}`));
+    expect(seedOnly.map((j) => `${j.branch}/${j.rankCategory}`)).toEqual(Array(6).fill('navy/officer'));
+  });
+
+  it('applies a shorthand custom crossover to each skill level of an Air Force code', () => {
+    const p = { ...emptyProfile('self'), branch: 'airforce' as const, primaryCode: '1N051' };
+    const reasons = [...fieldsForProfile(p, data).values()].flatMap((f) => f.reasons).join(' ');
+    expect(reasons).toContain('1N051 custom crossover');
   });
 
   it('leads an Army 17C to Cybersecurity', () => {

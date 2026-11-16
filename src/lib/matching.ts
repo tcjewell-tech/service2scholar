@@ -47,6 +47,11 @@ function escapeRegex(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/** Crossover codes may use Air Force shorthand, where X stands for the skill-level digit: 1N0X1 covers 1N031, 1N051... */
+function codeMatches(pattern: string, code: string): boolean {
+  return pattern.length === code.length && [...pattern].every((ch, i) => ch === code[i] || (ch === 'X' && /\d/.test(code[i])));
+}
+
 /** Degree fields suggested by a profile's job codes, KSBP text and picked interests. */
 export function fieldsForProfile(profile: Profile, repo: DataRepository): Map<string, FieldMatch> {
   const fields = new Map<string, FieldMatch>();
@@ -77,7 +82,7 @@ export function fieldsForProfile(profile: Profile, repo: DataRepository): Map<st
       }
     }
     for (const cx of repo.customCrossover) {
-      if (cx.branch !== profile.branch || cx.code !== code) continue;
+      if (cx.branch !== profile.branch || !codeMatches(cx.code, code)) continue;
       for (const cip of cx.cip) {
         add(cip, primary ? WEIGHTS.primaryCustom : WEIGHTS.secondaryCustom, `${code} custom crossover: ${cx.note}`);
       }

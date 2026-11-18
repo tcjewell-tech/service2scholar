@@ -36,6 +36,40 @@ export interface DataRepository {
   schools: School[];
   scholarships: Scholarship[];
   rates: BenefitRates;
+  /** Lookup built by buildJobCodeIndex; read it through findJobCode. */
+  jobCodeIndex?: Map<string, JobCode>;
+  /** SOC -> every 6-digit CIP O*NET links to it, including fields the app does not offer. */
+  rawSocToCip?: Record<string, string[]>;
+}
+
+/** The 4-digit CIP family of a 6-digit code: 11.1003 -> 1110. */
+export const cipFamily = (cip: string) => cip.replace('.', '').slice(0, 4);
+
+// Remembers which list each index was built from, so a copied repo with a different jobCodes list never reads a stale index.
+const indexSource = new WeakMap<Map<string, JobCode>, JobCode[]>();
+
+/** Keys every code by branch/rank/code and by branch/code; the first entry seen wins, as Array.find would. */
+export function buildJobCodeIndex(jobCodes: JobCode[]): Map<string, JobCode> {
+  const index = new Map<string, JobCode>();
+  for (const j of jobCodes) {
+    for (const k of [`${j.branch}/${j.rankCategory}/${j.code}`, `${j.branch}/${j.code}`]) {
+      if (!index.has(k)) index.set(k, j);
+    }
+  }
+  indexSource.set(index, jobCodes);
+  return index;
+}
+
+/** The job for a branch and code, preferring the given rank and falling back to any rank. */
+export function findJobCode(repo: DataRepository, branch: Branch, code: string, rankCategory?: RankCategory): JobCode | undefined {
+  const index = repo.jobCodeIndex;
+  if (index && indexSource.get(index) === repo.jobCodes) {
+    return (rankCategory ? index.get(`${branch}/${rankCategory}/${code}`) : undefined) ?? index.get(`${branch}/${code}`);
+  }
+  return (
+    (rankCategory ? repo.jobCodes.find((j) => j.branch === branch && j.code === code && j.rankCategory === rankCategory) : undefined) ??
+    repo.jobCodes.find((j) => j.branch === branch && j.code === code)
+  );
 }
 
 export const seedRepository: DataRepository = {
@@ -49,6 +83,7 @@ export const seedRepository: DataRepository = {
   schools: SCHOOLS,
   scholarships: SCHOLARSHIPS,
   rates: BENEFIT_RATES,
+  jobCodeIndex: buildJobCodeIndex(JOB_CODES),
 };
 
 /** A snapshot written by scripts/refresh-data.js: real VA figures for the seed's schools. */
@@ -66,7 +101,7 @@ export interface GidsSnapshot {
 function programsFrom(families: Record<DegreeLevel, string[]>, fields: CipField[]): Program[] {
   const all: DegreeLevel[] = ['bachelor', 'master'];
   return fields
-    .map(({ cip }) => ({ cip, levels: all.filter((l) => families[l].includes(cip.replace('.', '').slice(0, 4))) }))
+    .map(({ cip }) => ({ cip, levels: all.filter((l) => families[l].includes(cipFamily(cip))) }))
     .filter((p) => p.levels.length > 0);
 }
 
@@ -95,7 +130,8 @@ export interface OnetSnapshot {
 /**
  * Lays the O*NET military crosswalk over a repository: its job codes replace same-code seed entries
  * (keeping the seed's picker group), and its occupation-to-field links are added to the seed's.
- * Seed-only codes stay, e.g. Navy officer designators, which the crosswalk does not map.
+ * From the seed, a branch the crosswalk covers keeps only its Navy officer designators, which the
+ * crosswalk does not map; a branch missing from the snapshot keeps all its seed codes.
  */
 export function withOnet(repo: DataRepository, live: OnetSnapshot): DataRepository {
   const key = (j: Pick<JobCode, 'branch' | 'rankCategory' | 'code'>) => `${j.branch}/${j.rankCategory}/${j.code}`;
@@ -109,6 +145,11 @@ export function withOnet(repo: DataRepository, live: OnetSnapshot): DataReposito
     }
   }
   const liveKeys = new Set(jobCodes.map(key));
+  const liveBranches = new Set(Object.keys(live.jobCodes));
+  const seedOnly = repo.jobCodes.filter(
+    (j) => !liveKeys.has(key(j)) && (!liveBranches.has(j.branch) || (j.branch === 'navy' && j.rankCategory === 'officer'))
+  );
+  const allJobCodes = [...jobCodes, ...seedOnly];
 
   // Only fields the app offers count; O*NET links occupations to hundreds of other CIP codes.
   const offered = new Set(repo.cipFields.map((f) => f.cip));
@@ -120,11 +161,18 @@ export function withOnet(repo: DataRepository, live: OnetSnapshot): DataReposito
 
   return {
     ...repo,
-    jobCodes: [...jobCodes, ...repo.jobCodes.filter((j) => !liveKeys.has(key(j)))],
+    jobCodes: allJobCodes,
+    jobCodeIndex: buildJobCodeIndex(allJobCodes),
     socTitles: { ...repo.socTitles, ...live.socTitles },
     socToCip,
+    rawSocToCip: live.socToCip,
   };
 }
 
 export const schoolDataAsOf = gids.fetchedAt;
 export const data = withOnet(withGids(seedRepository, gids as GidsSnapshot), onet as unknown as OnetSnapshot);
+
+/** Where screens and hooks read the data. Today it is the bundled snapshot; a server-backed source can replace it here. */
+export function useData(): DataRepository {
+  return data;
+}

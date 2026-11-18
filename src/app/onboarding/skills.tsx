@@ -1,11 +1,12 @@
 import { OnboardingFrame } from '@/components/onboarding-frame';
 import { Chip, Field, Row, SectionLabel } from '@/components/ui';
-import { data } from '@/data';
+import { useData } from '@/data';
 import { useAccount } from '@/store';
 
 export default function SkillsStep() {
   const draft = useAccount((s) => s.draft)!;
   const updateDraft = useAccount((s) => s.updateDraft);
+  const data = useData();
   const self = draft.beneficiary === 'self';
 
   const toggleInterest = (cip: string) =>

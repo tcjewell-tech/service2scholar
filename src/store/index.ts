@@ -2,6 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
+import { data, findJobCode, type DataRepository } from '@/data';
+import { parseProgramKey } from '@/lib/matching';
 import { emptyProfile, type Profile } from '@/lib/profile';
 import { defaultNotificationSettings, type NotificationSettings } from '@/lib/reminders';
 
@@ -28,6 +30,52 @@ interface AccountState {
   setDone: (itemId: string, value: boolean) => void;
   updateNotifications: (patch: Partial<NotificationSettings>) => void;
   reset: () => void;
+}
+
+/**
+ * A stored job code in the form the current data uses. Version 1 let Air Force and Space Force users pick
+ * shorthand codes such as 1N0X1; the data now lists one code per skill level (1N031, 1N051, 1N071).
+ */
+export function normalizeLegacyJobCode(
+  profile: Pick<Profile, 'branch' | 'rankCategory'>,
+  code: string,
+  repo: DataRepository = data
+): string {
+  if (findJobCode(repo, profile.branch, code, profile.rankCategory)) return code;
+  if ((profile.branch !== 'airforce' && profile.branch !== 'spaceforce') || !/^.{3}X.$/.test(code)) return code;
+  // 5-level (journeyman) first: it is what most separating airmen hold. Then apprentice, then craftsman.
+  const upgraded = ['5', '3', '7'].map((level) => code.replace('X', level)).find((c) => findJobCode(repo, profile.branch, c, profile.rankCategory));
+  return upgraded ?? code;
+}
+
+const unique = <T,>(list: T[] | undefined): T[] => [...new Set(list ?? [])];
+
+/** Brings a version 1 profile up to date: current job codes, no repeated codes, no repeated saved items. */
+export function migrateProfileV1ToV2(profile: Profile, repo: DataRepository = data): Profile {
+  const normalize = (code: string) => normalizeLegacyJobCode(profile, code.trim(), repo);
+  const primaryCode = profile.primaryCode?.trim() ? normalize(profile.primaryCode) : null;
+  return {
+    ...profile,
+    primaryCode,
+    secondaryCodes: unique((profile.secondaryCodes ?? []).filter((c) => c.trim()).map(normalize)).filter((c) => c !== primaryCode),
+    savedProgramKeys: unique(profile.savedProgramKeys),
+    plannedScholarshipIds: unique(profile.plannedScholarshipIds),
+  };
+}
+
+/** Splits saved program keys into those the data still offers and those that are retired or malformed. */
+export function reconcileSavedPrograms(
+  savedProgramKeys: string[],
+  repo: DataRepository = data
+): { activeKeys: string[]; orphanedKeys: string[] } {
+  const activeKeys: string[] = [];
+  const orphanedKeys: string[] = [];
+  for (const key of savedProgramKeys) {
+    const parsed = parseProgramKey(key);
+    const program = parsed && repo.schools.find((s) => s.id === parsed.schoolId)?.programs.find((p) => p.cip === parsed.cip);
+    (parsed && program?.levels.includes(parsed.level) ? activeKeys : orphanedKeys).push(key);
+  }
+  return { activeKeys, orphanedKeys };
 }
 
 function toggle(list: string[], value: string): string[] {
@@ -110,7 +158,21 @@ export const useAccount = create<AccountState>()(
     }),
     {
       name: 'service-to-scholar/account',
-      version: 1,
+      version: 2,
+      migrate: (persisted, version) => {
+        const state = persisted as AccountState;
+        if (version >= 2) return state;
+        try {
+          return {
+            ...state,
+            profiles: (state.profiles ?? []).map((p) => migrateProfileV1ToV2(p)),
+            draft: state.draft ? migrateProfileV1ToV2(state.draft) : null,
+          };
+        } catch {
+          // Better an un-migrated plan than a lost one: old codes simply stop matching until re-picked.
+          return state;
+        }
+      },
       storage: createJSONStorage(() => AsyncStorage),
       partialize: ({ hydrated, ...rest }) => rest,
       onRehydrateStorage: () => () => useAccount.setState({ hydrated: true }),

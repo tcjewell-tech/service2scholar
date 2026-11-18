@@ -6,7 +6,7 @@ import { StyleSheet, View } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { Button, Card, Chip, Heading, Notice, Screen, SectionLabel } from '@/components/ui';
 import { Spacing } from '@/constants/theme';
-import { data } from '@/data';
+import { useData } from '@/data';
 import { plannedScholarshipsFor } from '@/hooks/use-plan';
 import { useTheme } from '@/hooks/use-theme';
 import { eligibleScholarships, estimateCost, formatUsd } from '@/lib/costCalculator';
@@ -20,10 +20,11 @@ export default function ProgramScreen() {
   const toggleSaved = useAccount((s) => s.toggleSavedProgram);
   const togglePlanned = useAccount((s) => s.togglePlannedScholarship);
   const theme = useTheme();
+  const data = useData();
 
   const match = useMemo(
     () => (profile ? matchPrograms(profile, data).find((m) => m.key === key) : undefined),
-    [profile, key]
+    [profile, key, data]
   );
 
   if (!profile || !match) {
@@ -35,7 +36,7 @@ export default function ProgramScreen() {
     );
   }
 
-  const cost = estimateCost(profile, match.school, match.level, plannedScholarshipsFor(profile), data.rates);
+  const cost = estimateCost(profile, match.school, match.level, plannedScholarshipsFor(profile, data), data.rates);
   const scholarships = eligibleScholarships(profile, data.scholarships);
   const saved = profile.savedProgramKeys.includes(match.key);
   const school = match.school;

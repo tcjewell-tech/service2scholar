@@ -1,8 +1,25 @@
-import { data, seedRepository as repo, withGids, withOnet, type OnetSnapshot, type School } from '@/data';
+import {
+  buildJobCodeIndex,
+  data,
+  findJobCode,
+  seedRepository as repo,
+  withGids,
+  withOnet,
+  type DataRepository,
+  type JobCode,
+  type OnetSnapshot,
+  type School,
+} from '@/data';
 import onet from '@/data/live/onet.json';
 import { estimateCost } from '@/lib/costCalculator';
 import { fieldsForProfile } from '@/lib/matching';
 import { emptyProfile } from '@/lib/profile';
+import { migrateProfileV1ToV2, reconcileSavedPrograms } from '@/store';
+
+jest.mock('@react-native-async-storage/async-storage', () =>
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  require('@react-native-async-storage/async-storage/jest/async-storage-mock')
+);
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const { mapInstitution, mapScorecard } = require('../scripts/refresh-data');
@@ -202,5 +219,138 @@ describe('bundled O*NET snapshot', () => {
   it('leads an Army 17C to Cybersecurity', () => {
     const p = { ...emptyProfile('self'), branch: 'army' as const, primaryCode: '17C' };
     expect(fieldsForProfile(p, data).has('11.1003')).toBe(true);
+  });
+});
+
+describe('withOnet seed retention', () => {
+  it('drops shorthand and stale seed codes for covered branches but keeps Navy officer designators', () => {
+    const stale: JobCode = { code: '1N0X1', title: 'Shorthand', branch: 'airforce', rankCategory: 'enlisted', soc: [] };
+    const merged = withOnet(
+      { ...repo, jobCodes: [...repo.jobCodes, stale] },
+      { jobCodes: { airforce: { enlisted: [['1N051', 'Real', []]] }, navy: { enlisted: [['IT', 'Real', []]] } }, socTitles: {}, socToCip: {} }
+    );
+    expect(merged.jobCodes.some((j) => j.code === '1N0X1')).toBe(false);
+    expect(merged.jobCodes.some((j) => j.branch === 'navy' && j.rankCategory === 'enlisted' && j.code === 'HM')).toBe(false);
+    expect(merged.jobCodes.some((j) => j.branch === 'navy' && j.code === '1110')).toBe(true);
+    // Army is missing from this snapshot, so its seed codes stay.
+    expect(merged.jobCodes.some((j) => j.branch === 'army' && j.code === '11B')).toBe(true);
+  });
+
+  it('leaves no shorthand AFSCs in the bundled data', () => {
+    expect(data.jobCodes.filter((j) => j.branch === 'airforce' && /^.{3}X.$/.test(j.code))).toEqual([]);
+    expect(findJobCode(data, 'airforce', '1N0X1')).toBeUndefined();
+    expect(findJobCode(data, 'navy', '1110', 'officer')?.title).toBe('Surface Warfare Officer');
+  });
+});
+
+describe('findJobCode', () => {
+  const enlisted: JobCode = { code: '99Z', title: 'Enlisted', branch: 'army', rankCategory: 'enlisted', soc: [] };
+  const officer: JobCode = { code: '99Z', title: 'Officer', branch: 'army', rankCategory: 'officer', soc: [] };
+  const jobCodes = [enlisted, officer];
+  const indexed: DataRepository = { ...repo, jobCodes, jobCodeIndex: buildJobCodeIndex(jobCodes) };
+
+  it('resolves the rank-specific code from the index without scanning the list', () => {
+    const find = jest.spyOn(jobCodes, 'find');
+    expect(findJobCode(indexed, 'army', '99Z', 'officer')).toBe(officer);
+    expect(findJobCode(indexed, 'army', '99Z', 'enlisted')).toBe(enlisted);
+    expect(find).not.toHaveBeenCalled();
+    find.mockRestore();
+  });
+
+  it('falls back to the first entry of any rank when the rank differs or is not given', () => {
+    expect(findJobCode(indexed, 'army', '99Z', 'warrant')).toBe(enlisted);
+    expect(findJobCode(indexed, 'army', '99Z')).toBe(enlisted);
+    expect(findJobCode(indexed, 'navy', '99Z')).toBeUndefined();
+  });
+
+  it('scans the list when a repo has no index, or an index copied from another list', () => {
+    expect(findJobCode({ ...repo, jobCodes, jobCodeIndex: undefined }, 'army', '99Z', 'officer')).toBe(officer);
+    // repo.jobCodeIndex was built for the seed list, which has no 99Z.
+    expect(findJobCode({ ...repo, jobCodes }, 'army', '99Z', 'officer')).toBe(officer);
+  });
+});
+
+describe('fieldsForProfile guards and fallback', () => {
+  it('gives no corroboration bonus when the same code is both primary and secondary', () => {
+    const once = { ...emptyProfile('self'), branch: 'army' as const, primaryCode: '17C' };
+    const twice = { ...once, secondaryCodes: ['17C', ' 17C '] };
+    expect([...fieldsForProfile(twice, data).values()]).toEqual([...fieldsForProfile(once, data).values()]);
+  });
+
+  const job: JobCode = { code: '99Z', title: 'Test Job', branch: 'army', rankCategory: 'enlisted', soc: ['99-0001'] };
+  const fallbackRepo: DataRepository = {
+    ...repo,
+    jobCodes: [job],
+    jobCodeIndex: undefined,
+    socTitles: { '99-0001': 'Test Occupation' },
+    socToCip: {},
+    // 11.1099 is not offered, but shares family 11.10 with the offered 11.1003 Cybersecurity.
+    rawSocToCip: { '99-0001': ['11.1099', '99.9999'] },
+  };
+  const p = { ...emptyProfile('self'), branch: 'army' as const, primaryCode: '99Z' };
+
+  it('falls back to an offered field in the same 4-digit CIP family', () => {
+    expect([...fieldsForProfile(p, fallbackRepo).values()]).toEqual([
+      { cip: '11.1003', weight: 0.55, reasons: ['Primary 99Z (Test Job) → Test Occupation (related field)'] },
+    ]);
+  });
+
+  it('does not fall back when the job already has a direct field', () => {
+    const direct = fieldsForProfile(p, { ...fallbackRepo, socToCip: { '99-0001': ['52.0201'] } });
+    expect([...direct.keys()]).toEqual(['52.0201']);
+  });
+
+  it('lets more bundled job codes reach a field than the 6,711 that did before the fallback', () => {
+    const fieldsOf = (j: JobCode) => [
+      ...fieldsForProfile({ ...emptyProfile('self'), branch: j.branch, rankCategory: j.rankCategory, primaryCode: j.code }, data).values(),
+    ];
+    const all = data.jobCodes.map(fieldsOf);
+    const reached = all.filter((f) => f.length > 0).length;
+    const related = all.filter((f) => f.some((x) => x.weight === 0.55)).length;
+    const pct = ((100 * reached) / all.length).toFixed(1);
+    console.log(`COVERAGE ${reached} of ${all.length} job codes reach a field (${pct}%), ${related} of them only through a related field`);
+    expect(reached).toBeGreaterThan(6711);
+  });
+});
+
+describe('store migration to version 2', () => {
+  it('upgrades Air Force shorthand to the 5-level code and strips repeated secondary codes', () => {
+    const v1 = {
+      ...emptyProfile('self'),
+      branch: 'airforce' as const,
+      primaryCode: '1N0X1',
+      secondaryCodes: ['1N0X1', '3P0X1', '3P0X1', ' ', '1N051'],
+      savedProgramKeys: ['usc:11.0701:bachelor', 'usc:11.0701:bachelor'],
+      plannedScholarshipIds: ['a', 'a'],
+    };
+    expect(migrateProfileV1ToV2(v1)).toEqual({
+      ...v1,
+      primaryCode: '1N051',
+      secondaryCodes: ['3P051'],
+      savedProgramKeys: ['usc:11.0701:bachelor'],
+      plannedScholarshipIds: ['a'],
+    });
+  });
+
+  it('leaves codes that still resolve, and unknown codes, untouched', () => {
+    const army = { ...emptyProfile('self'), branch: 'army' as const, primaryCode: '17C', secondaryCodes: ['ZZZX1'] };
+    expect(migrateProfileV1ToV2(army)).toEqual(army);
+  });
+});
+
+describe('reconcileSavedPrograms', () => {
+  it('separates programs the data still offers from retired or malformed keys', () => {
+    const school = data.schools[0];
+    const { cip, levels } = school.programs[0];
+    const good = `${school.id}:${cip}:${levels[0]}`;
+    const orphans = ['no-such-school:11.0701:bachelor', `${school.id}:99.9999:bachelor`, `${school.id}:${cip}:doctorate`, 'garbage', ''];
+    expect(reconcileSavedPrograms([good, ...orphans])).toEqual({ activeKeys: [good], orphanedKeys: orphans });
+  });
+
+  it('parses keys from the right, so a school id may contain a colon', () => {
+    const odd = { ...data.schools[0], id: 'sys:campus', programs: [{ cip: '11.0701', levels: ['master' as const] }] };
+    expect(reconcileSavedPrograms(['sys:campus:11.0701:master'], { ...data, schools: [odd] }).activeKeys).toEqual([
+      'sys:campus:11.0701:master',
+    ]);
   });
 });

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { data } from '@/data';
+import { data, useData, type DataRepository } from '@/data';
 import { eligibleScholarships, estimateCost, type CostEstimate } from '@/lib/costCalculator';
 import { matchPrograms, type ProgramMatch } from '@/lib/matching';
 import type { Profile } from '@/lib/profile';
@@ -11,21 +11,23 @@ export interface CostedMatch {
   cost: CostEstimate;
 }
 
-export function plannedScholarshipsFor(profile: Profile) {
-  return eligibleScholarships(profile, data.scholarships).filter((s) => profile.plannedScholarshipIds.includes(s.id));
+export function plannedScholarshipsFor(profile: Profile, repo: DataRepository = data) {
+  return eligibleScholarships(profile, repo.scholarships).filter((s) => profile.plannedScholarshipIds.includes(s.id));
 }
 
 export function useCostedMatches(profile: Profile | null): CostedMatch[] {
+  const data = useData();
   return useMemo(() => {
     if (!profile) return [];
-    const planned = plannedScholarshipsFor(profile);
+    const planned = plannedScholarshipsFor(profile, data);
     return matchPrograms(profile, data).map((match) => ({
       match,
       cost: estimateCost(profile, match.school, match.level, planned, data.rates),
     }));
-  }, [profile]);
+  }, [profile, data]);
 }
 
 export function useChecklist(profile: Profile | null) {
-  return useMemo(() => (profile ? buildChecklist(profile, data) : []), [profile]);
+  const data = useData();
+  return useMemo(() => (profile ? buildChecklist(profile, data) : []), [profile, data]);
 }

@@ -5,7 +5,7 @@ import { Alert, Platform, Switch, View } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { Button, Card, Chip, Notice, Row, Screen, SectionLabel } from '@/components/ui';
 import { Spacing } from '@/constants/theme';
-import { data, schoolDataAsOf } from '@/data';
+import { schoolDataAsOf, useData } from '@/data';
 import { useTheme } from '@/hooks/use-theme';
 import { remindersSupported, sendTestReminder } from '@/lib/notifications';
 import { CATEGORY_LABEL, type ChecklistCategory } from '@/lib/timeline';
@@ -40,6 +40,7 @@ export default function SettingsScreen() {
   const update = useAccount((st) => st.updateNotifications);
   const profiles = useAccount((st) => st.profiles);
   const reset = useAccount((st) => st.reset);
+  const data = useData();
   const [testMsg, setTestMsg] = useState<string | null>(null);
 
   const toggleLead = (d: number) => {

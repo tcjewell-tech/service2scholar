@@ -115,8 +115,8 @@ export function buildChecklist(profile: Profile, repo: DataRepository): Checklis
   const latestDeadline = addDays(term, -30);
   const seenSchools = new Set<string>();
   for (const key of profile.savedProgramKeys) {
-    const { schoolId } = parseProgramKey(key);
-    if (seenSchools.has(schoolId)) continue;
+    const schoolId = parseProgramKey(key)?.schoolId;
+    if (!schoolId || seenSchools.has(schoolId)) continue;
     seenSchools.add(schoolId);
     const school = repo.schools.find((s) => s.id === schoolId);
     if (!school) continue;

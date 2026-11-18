@@ -5,7 +5,7 @@ import { OnboardingFrame } from '@/components/onboarding-frame';
 import { ThemedText } from '@/components/themed-text';
 import { Field, SectionLabel } from '@/components/ui';
 import { Spacing } from '@/constants/theme';
-import { data, type JobCode } from '@/data';
+import { useData, type JobCode } from '@/data';
 import { useTheme } from '@/hooks/use-theme';
 import { BRANCHES, codeTermFor, RANK_LABEL } from '@/lib/profile';
 import { useAccount } from '@/store';
@@ -14,12 +14,13 @@ export default function CodesStep() {
   const draft = useAccount((s) => s.draft)!;
   const updateDraft = useAccount((s) => s.updateDraft);
   const theme = useTheme();
+  const data = useData();
   const [query, setQuery] = useState('');
   const term = codeTermFor(draft.branch, draft.rankCategory);
 
   const codes = useMemo(
     () => data.jobCodes.filter((j) => j.branch === draft.branch && j.rankCategory === draft.rankCategory),
-    [draft.branch, draft.rankCategory]
+    [data, draft.branch, draft.rankCategory]
   );
   const q = query.trim().toLowerCase();
   const matching = q

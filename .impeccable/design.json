@@ -1,0 +1,533 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-18T18:34:54.873Z",
+  "title": "Design System: Service to Scholar",
+  "extensions": {
+    "colorMeta": {
+      "dress-blue": {
+        "role": "primary",
+        "displayName": "Dress Blue",
+        "canonical": "#1F3A5F",
+        "tonalRamp": [
+          "oklch(15% 0.031 257)",
+          "oklch(27% 0.044 257)",
+          "oklch(38% 0.055 257)",
+          "oklch(50% 0.068 257)",
+          "oklch(62% 0.066 257)",
+          "oklch(74% 0.053 257)",
+          "oklch(85% 0.042 257)",
+          "oklch(95% 0.031 257)"
+        ]
+      },
+      "on-dress-blue": {
+        "role": "primary",
+        "displayName": "On Dress Blue",
+        "canonical": "#FFFFFF",
+        "tonalRamp": [
+          "oklch(15% 0.000 0)",
+          "oklch(27% 0.000 0)",
+          "oklch(38% 0.000 0)",
+          "oklch(50% 0.000 0)",
+          "oklch(62% 0.000 0)",
+          "oklch(74% 0.000 0)",
+          "oklch(85% 0.000 0)",
+          "oklch(95% 0.000 0)"
+        ]
+      },
+      "brass-button": {
+        "role": "secondary",
+        "displayName": "Brass Button",
+        "canonical": "#B8892B",
+        "tonalRamp": [
+          "oklch(15% 0.052 81)",
+          "oklch(27% 0.072 81)",
+          "oklch(38% 0.091 81)",
+          "oklch(50% 0.112 81)",
+          "oklch(62% 0.109 81)",
+          "oklch(74% 0.088 81)",
+          "oklch(85% 0.069 81)",
+          "oklch(95% 0.052 81)"
+        ]
+      },
+      "parchment": {
+        "role": "neutral",
+        "displayName": "Parchment",
+        "canonical": "#F6F5F1",
+        "tonalRamp": [
+          "oklch(15% 0.002 95)",
+          "oklch(27% 0.003 95)",
+          "oklch(38% 0.004 95)",
+          "oklch(50% 0.005 95)",
+          "oklch(62% 0.005 95)",
+          "oklch(74% 0.004 95)",
+          "oklch(85% 0.003 95)",
+          "oklch(95% 0.002 95)"
+        ]
+      },
+      "white-sheet": {
+        "role": "neutral",
+        "displayName": "White Sheet",
+        "canonical": "#FFFFFF",
+        "tonalRamp": [
+          "oklch(15% 0.000 0)",
+          "oklch(27% 0.000 0)",
+          "oklch(38% 0.000 0)",
+          "oklch(50% 0.000 0)",
+          "oklch(62% 0.000 0)",
+          "oklch(74% 0.000 0)",
+          "oklch(85% 0.000 0)",
+          "oklch(95% 0.000 0)"
+        ]
+      },
+      "blotter": {
+        "role": "neutral",
+        "displayName": "Blotter",
+        "canonical": "#E6EAF0",
+        "tonalRamp": [
+          "oklch(15% 0.004 258)",
+          "oklch(27% 0.006 258)",
+          "oklch(38% 0.007 258)",
+          "oklch(50% 0.009 258)",
+          "oklch(62% 0.008 258)",
+          "oklch(74% 0.007 258)",
+          "oklch(85% 0.005 258)",
+          "oklch(95% 0.004 258)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#14202E",
+        "tonalRamp": [
+          "oklch(15% 0.014 253)",
+          "oklch(27% 0.019 253)",
+          "oklch(38% 0.024 253)",
+          "oklch(50% 0.030 253)",
+          "oklch(62% 0.029 253)",
+          "oklch(74% 0.023 253)",
+          "oklch(85% 0.018 253)",
+          "oklch(95% 0.014 253)"
+        ]
+      },
+      "slate": {
+        "role": "neutral",
+        "displayName": "Slate",
+        "canonical": "#5B6573",
+        "tonalRamp": [
+          "oklch(15% 0.011 257)",
+          "oklch(27% 0.015 257)",
+          "oklch(38% 0.019 257)",
+          "oklch(50% 0.024 257)",
+          "oklch(62% 0.023 257)",
+          "oklch(74% 0.019 257)",
+          "oklch(85% 0.015 257)",
+          "oklch(95% 0.011 257)"
+        ]
+      },
+      "khaki-rule": {
+        "role": "neutral",
+        "displayName": "Khaki Rule",
+        "canonical": "#DEDAD0",
+        "tonalRamp": [
+          "oklch(15% 0.006 89)",
+          "oklch(27% 0.009 89)",
+          "oklch(38% 0.011 89)",
+          "oklch(50% 0.013 89)",
+          "oklch(62% 0.013 89)",
+          "oklch(74% 0.010 89)",
+          "oklch(85% 0.008 89)",
+          "oklch(95% 0.006 89)"
+        ]
+      },
+      "ribbon-green": {
+        "role": "tertiary",
+        "displayName": "Ribbon Green",
+        "canonical": "#2F7D4F",
+        "tonalRamp": [
+          "oklch(15% 0.045 154)",
+          "oklch(27% 0.063 154)",
+          "oklch(38% 0.080 154)",
+          "oklch(50% 0.098 154)",
+          "oklch(62% 0.095 154)",
+          "oklch(74% 0.077 154)",
+          "oklch(85% 0.060 154)",
+          "oklch(95% 0.045 154)"
+        ]
+      },
+      "caution-amber": {
+        "role": "tertiary",
+        "displayName": "Caution Amber",
+        "canonical": "#9A6A00",
+        "tonalRamp": [
+          "oklch(15% 0.050 78)",
+          "oklch(27% 0.070 78)",
+          "oklch(38% 0.089 78)",
+          "oklch(50% 0.109 78)",
+          "oklch(62% 0.105 78)",
+          "oklch(74% 0.085 78)",
+          "oklch(85% 0.067 78)",
+          "oklch(95% 0.050 78)"
+        ]
+      },
+      "signal-red": {
+        "role": "tertiary",
+        "displayName": "Signal Red",
+        "canonical": "#B23A3A",
+        "tonalRamp": [
+          "oklch(15% 0.067 24)",
+          "oklch(27% 0.094 24)",
+          "oklch(38% 0.118 24)",
+          "oklch(50% 0.145 24)",
+          "oklch(62% 0.140 24)",
+          "oklch(74% 0.114 24)",
+          "oklch(85% 0.089 24)",
+          "oklch(95% 0.067 24)"
+        ]
+      },
+      "night-watch": {
+        "role": "neutral",
+        "displayName": "Night Watch",
+        "canonical": "#0E141B",
+        "tonalRamp": [
+          "oklch(15% 0.007 253)",
+          "oklch(27% 0.010 253)",
+          "oklch(38% 0.013 253)",
+          "oklch(50% 0.016 253)",
+          "oklch(62% 0.015 253)",
+          "oklch(74% 0.012 253)",
+          "oklch(85% 0.010 253)",
+          "oklch(95% 0.007 253)"
+        ]
+      },
+      "night-sheet": {
+        "role": "neutral",
+        "displayName": "Night Sheet",
+        "canonical": "#18212B",
+        "tonalRamp": [
+          "oklch(15% 0.010 251)",
+          "oklch(27% 0.014 251)",
+          "oklch(38% 0.018 251)",
+          "oklch(50% 0.022 251)",
+          "oklch(62% 0.021 251)",
+          "oklch(74% 0.017 251)",
+          "oklch(85% 0.013 251)",
+          "oklch(95% 0.010 251)"
+        ]
+      },
+      "night-blotter": {
+        "role": "neutral",
+        "displayName": "Night Blotter",
+        "canonical": "#243142",
+        "tonalRamp": [
+          "oklch(15% 0.015 255)",
+          "oklch(27% 0.021 255)",
+          "oklch(38% 0.027 255)",
+          "oklch(50% 0.033 255)",
+          "oklch(62% 0.032 255)",
+          "oklch(74% 0.026 255)",
+          "oklch(85% 0.020 255)",
+          "oklch(95% 0.015 255)"
+        ]
+      },
+      "night-ink": {
+        "role": "neutral",
+        "displayName": "Night Ink",
+        "canonical": "#EEF1F5",
+        "tonalRamp": [
+          "oklch(15% 0.003 255)",
+          "oklch(27% 0.004 255)",
+          "oklch(38% 0.005 255)",
+          "oklch(50% 0.006 255)",
+          "oklch(62% 0.006 255)",
+          "oklch(74% 0.005 255)",
+          "oklch(85% 0.004 255)",
+          "oklch(95% 0.003 255)"
+        ]
+      },
+      "night-slate": {
+        "role": "neutral",
+        "displayName": "Night Slate",
+        "canonical": "#9AA6B4",
+        "tonalRamp": [
+          "oklch(15% 0.010 252)",
+          "oklch(27% 0.015 252)",
+          "oklch(38% 0.019 252)",
+          "oklch(50% 0.023 252)",
+          "oklch(62% 0.022 252)",
+          "oklch(74% 0.018 252)",
+          "oklch(85% 0.014 252)",
+          "oklch(95% 0.010 252)"
+        ]
+      },
+      "night-rule": {
+        "role": "neutral",
+        "displayName": "Night Rule",
+        "canonical": "#2A3644",
+        "tonalRamp": [
+          "oklch(15% 0.013 253)",
+          "oklch(27% 0.018 253)",
+          "oklch(38% 0.023 253)",
+          "oklch(50% 0.028 253)",
+          "oklch(62% 0.027 253)",
+          "oklch(74% 0.022 253)",
+          "oklch(85% 0.017 253)",
+          "oklch(95% 0.013 253)"
+        ]
+      },
+      "sky-blue": {
+        "role": "primary",
+        "displayName": "Sky Blue",
+        "canonical": "#8FB3E0",
+        "tonalRamp": [
+          "oklch(15% 0.033 254)",
+          "oklch(27% 0.046 254)",
+          "oklch(38% 0.058 254)",
+          "oklch(50% 0.071 254)",
+          "oklch(62% 0.068 254)",
+          "oklch(74% 0.055 254)",
+          "oklch(85% 0.043 254)",
+          "oklch(95% 0.033 254)"
+        ]
+      },
+      "on-sky-blue": {
+        "role": "primary",
+        "displayName": "On Sky Blue",
+        "canonical": "#0E141B",
+        "tonalRamp": [
+          "oklch(15% 0.007 253)",
+          "oklch(27% 0.010 253)",
+          "oklch(38% 0.013 253)",
+          "oklch(50% 0.016 253)",
+          "oklch(62% 0.015 253)",
+          "oklch(74% 0.012 253)",
+          "oklch(85% 0.010 253)",
+          "oklch(95% 0.007 253)"
+        ]
+      },
+      "polished-brass": {
+        "role": "secondary",
+        "displayName": "Polished Brass",
+        "canonical": "#E0B85A",
+        "tonalRamp": [
+          "oklch(15% 0.052 86)",
+          "oklch(27% 0.073 86)",
+          "oklch(38% 0.092 86)",
+          "oklch(50% 0.113 86)",
+          "oklch(62% 0.109 86)",
+          "oklch(74% 0.088 86)",
+          "oklch(85% 0.069 86)",
+          "oklch(95% 0.052 86)"
+        ]
+      },
+      "night-green": {
+        "role": "tertiary",
+        "displayName": "Night Green",
+        "canonical": "#6CC08F",
+        "tonalRamp": [
+          "oklch(15% 0.047 157)",
+          "oklch(27% 0.066 157)",
+          "oklch(38% 0.083 157)",
+          "oklch(50% 0.102 157)",
+          "oklch(62% 0.099 157)",
+          "oklch(74% 0.080 157)",
+          "oklch(85% 0.063 157)",
+          "oklch(95% 0.047 157)"
+        ]
+      },
+      "night-amber": {
+        "role": "tertiary",
+        "displayName": "Night Amber",
+        "canonical": "#E2B341",
+        "tonalRamp": [
+          "oklch(15% 0.059 86)",
+          "oklch(27% 0.083 86)",
+          "oklch(38% 0.105 86)",
+          "oklch(50% 0.128 86)",
+          "oklch(62% 0.124 86)",
+          "oklch(74% 0.101 86)",
+          "oklch(85% 0.079 86)",
+          "oklch(95% 0.059 86)"
+        ]
+      },
+      "night-red": {
+        "role": "tertiary",
+        "displayName": "Night Red",
+        "canonical": "#EF7C7C",
+        "tonalRamp": [
+          "oklch(15% 0.061 21)",
+          "oklch(27% 0.085 21)",
+          "oklch(38% 0.107 21)",
+          "oklch(50% 0.132 21)",
+          "oklch(62% 0.128 21)",
+          "oklch(74% 0.103 21)",
+          "oklch(85% 0.081 21)",
+          "oklch(95% 0.061 21)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "The question or title at the top of an onboarding step."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Profile name, degree field on a match card, and cost figures."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Default text, choice titles and button labels."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Secondary lines, chip text, hints and notices."
+      },
+      "label-bold": {
+        "displayName": "Label Bold",
+        "purpose": "Field labels and small headings."
+      },
+      "section-label": {
+        "displayName": "Section Label",
+        "purpose": "Uppercase heading above a group of cards."
+      },
+      "tag": {
+        "displayName": "Tag",
+        "purpose": "Small facts under a match."
+      }
+    },
+    "shadows": [],
+    "motion": [],
+    "breakpoints": []
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one main action on a screen or footer.",
+      "html": "<button class=\"ds-btn-primary\">Continue</button>",
+      "css": ".ds-btn-primary { font-family: system-ui, sans-serif; background: #1F3A5F; color: #FFFFFF; min-height: 48px; padding: 0 24px; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; } .ds-btn-primary:hover, .ds-btn-primary:active { opacity: 0.8; } .ds-btn-primary:focus-visible { outline: 2px solid #1F3A5F; outline-offset: 2px; } .ds-btn-primary:disabled { opacity: 0.4; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "A quieter action beside a primary button, such as Back.",
+      "html": "<button class=\"ds-btn-secondary\">Back</button>",
+      "css": ".ds-btn-secondary { font-family: system-ui, sans-serif; background: #E6EAF0; color: #1F3A5F; min-height: 48px; padding: 0 24px; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; } .ds-btn-secondary:hover, .ds-btn-secondary:active { opacity: 0.8; } .ds-btn-secondary:focus-visible { outline: 2px solid #1F3A5F; outline-offset: 2px; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "An outbound link sized to its label.",
+      "html": "<button class=\"ds-btn-ghost\">VA GI Bill Comparison Tool ↗</button>",
+      "css": ".ds-btn-ghost { font-family: system-ui, sans-serif; background: transparent; color: #1F3A5F; min-height: 48px; padding: 0 8px; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; } .ds-btn-ghost:hover, .ds-btn-ghost:active { opacity: 0.8; } .ds-btn-ghost:focus-visible { outline: 2px solid #1F3A5F; outline-offset: 2px; }"
+    },
+    {
+      "name": "Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "A filter, sort or option; the selected one is filled.",
+      "html": "<span class=\"ds-chip-row\"><button class=\"ds-chip ds-chip-selected\">Lowest cost to you</button><button class=\"ds-chip\">Best match</button></span>",
+      "css": ".ds-chip-row { display: inline-flex; gap: 8px; } .ds-chip { font-family: system-ui, sans-serif; background: #FFFFFF; color: #14202E; border: 1px solid #DEDAD0; border-radius: 999px; padding: 6px 16px; font-size: 14px; line-height: 20px; font-weight: 500; cursor: pointer; } .ds-chip:hover, .ds-chip:active { opacity: 0.8; } .ds-chip:focus-visible { outline: 2px solid #1F3A5F; outline-offset: 2px; } .ds-chip-selected { background: #1F3A5F; border-color: #1F3A5F; color: #FFFFFF; }"
+    },
+    {
+      "name": "Choice Row",
+      "kind": "custom",
+      "refersTo": "choice-selected",
+      "description": "A large single-choice row used in onboarding.",
+      "html": "<div class=\"ds-choice ds-choice-selected\" role=\"radio\" aria-checked=\"true\" tabindex=\"0\"><div class=\"ds-choice-text\"><strong>Enlisted</strong><span>E-1 to E-9</span></div><span class=\"ds-choice-radio\"><span></span></span></div>",
+      "css": ".ds-choice { font-family: system-ui, sans-serif; display: flex; align-items: center; gap: 16px; min-height: 56px; padding: 16px; background: #FFFFFF; border: 1.5px solid #DEDAD0; border-radius: 14px; color: #14202E; width: 320px; box-sizing: border-box; cursor: pointer; } .ds-choice:hover { opacity: 0.85; } .ds-choice:focus-visible { outline: 2px solid #1F3A5F; outline-offset: 2px; } .ds-choice-selected { background: #E6EAF0; border-color: #1F3A5F; } .ds-choice-text { flex: 1; display: flex; flex-direction: column; } .ds-choice-text strong { font-size: 16px; line-height: 24px; font-weight: 600; } .ds-choice-text span { font-size: 14px; line-height: 20px; color: #5B6573; } .ds-choice-radio { width: 22px; height: 22px; border-radius: 11px; border: 2px solid #1F3A5F; display: flex; align-items: center; justify-content: center; box-sizing: border-box; } .ds-choice-radio span { width: 10px; height: 10px; border-radius: 5px; background: #1F3A5F; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "A labelled field with a hint beneath.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Separation date</span><input class=\"ds-input\" placeholder=\"YYYY-MM-DD\"><span class=\"ds-field-hint\">Anchors your checklist dates.</span></label>",
+      "css": ".ds-field { font-family: system-ui, sans-serif; display: flex; flex-direction: column; gap: 4px; width: 320px; } .ds-field-label { font-size: 14px; line-height: 20px; font-weight: 700; color: #14202E; } .ds-input { font: inherit; font-size: 16px; color: #14202E; background: #FFFFFF; border: 1px solid #DEDAD0; border-radius: 10px; padding: 12px 16px; } .ds-input::placeholder { color: #5B6573; } .ds-input:focus-visible { outline: 2px solid #1F3A5F; outline-offset: 1px; } .ds-field-hint { font-size: 14px; line-height: 20px; color: #5B6573; }"
+    },
+    {
+      "name": "Notice",
+      "kind": "custom",
+      "refersTo": "notice",
+      "description": "States where figures come from; the left edge marks information or a warning.",
+      "html": "<div class=\"ds-notice\">School costs, Yellow Ribbon, housing rates and degree fields are government figures. Graduation rates are still sample data.</div>",
+      "css": ".ds-notice { font-family: system-ui, sans-serif; background: #FFFFFF; color: #5B6573; border-left: 3px solid #1F3A5F; border-radius: 8px; padding: 16px; font-size: 14px; line-height: 20px; font-weight: 500; width: 320px; box-sizing: border-box; }"
+    },
+    {
+      "name": "Match Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "One matched program with its three cost figures, tags and reason.",
+      "html": "<div class=\"ds-card\" tabindex=\"0\"><div class=\"ds-card-meta\">Columbia University – School of General Studies · New York, NY</div><div class=\"ds-card-title\">Computer Science</div><div class=\"ds-card-figures\"><div><span>You pay (tuition)</span><b class=\"ds-good\">$0</b></div><div><span>Paid to you</span><b>$46,630</b></div><div><span>Left over / yr</span><b class=\"ds-good\">$46,630</b></div></div><div class=\"ds-card-tags\"><span>Yellow Ribbon</span><span>Private nonprofit</span></div><div class=\"ds-card-meta\">Why: Primary 17C (Cyber Operations Specialist) → Information Security Analysts</div></div>",
+      "css": ".ds-card { font-family: system-ui, sans-serif; background: #FFFFFF; color: #14202E; border: 0.5px solid #DEDAD0; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 8px; width: 340px; box-sizing: border-box; cursor: pointer; } .ds-card:hover { opacity: 0.85; } .ds-card:focus-visible { outline: 2px solid #1F3A5F; outline-offset: 2px; } .ds-card-meta { font-size: 14px; line-height: 20px; color: #5B6573; font-weight: 500; } .ds-card-title { font-size: 17px; font-weight: 700; } .ds-card-figures { display: flex; gap: 8px; } .ds-card-figures div { flex: 1; display: flex; flex-direction: column; } .ds-card-figures span { font-size: 14px; line-height: 20px; color: #5B6573; } .ds-card-figures b { font-size: 18px; font-weight: 700; } .ds-good { color: #2F7D4F; } .ds-card-tags { display: flex; flex-wrap: wrap; gap: 4px; } .ds-card-tags span { background: #E6EAF0; border-radius: 6px; padding: 2px 8px; font-size: 12px; line-height: 16px; }"
+    },
+    {
+      "name": "Progress Bar",
+      "kind": "custom",
+      "description": "One segment per onboarding step; completed steps are filled.",
+      "html": "<div class=\"ds-progress\" aria-label=\"Step 3 of 7\"><i class=\"ds-on\"></i><i class=\"ds-on\"></i><i class=\"ds-on\"></i><i></i><i></i><i></i><i></i></div>",
+      "css": ".ds-progress { display: flex; gap: 4px; width: 320px; } .ds-progress i { flex: 1; height: 4px; border-radius: 2px; background: #E6EAF0; } .ds-progress .ds-on { background: #1F3A5F; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Briefing Folder",
+    "overview": "The app looks like a well-prepared transition packet: everything the reader needs, in order, with nothing decorative. Each screen is a stack of plain sheets on a parchment desk. A sheet holds one subject (a school, a cost breakdown, a group of settings) and states its facts without flourish. The reader is making a decision that involves money and deadlines, so the interface stays calm and lets the figures speak.\n\nControls are steady and plain: solid, generously sized, easy to hit with a thumb. Colour is used sparingly. Dress Blue marks what can be pressed and what is selected; one green marks money that comes back to the reader; Brass Button appears once, for a saved program. Everything else is ink on paper.\n\nThe system ships in two matching sets, a light one and a dark one, and follows the device setting. The dark set is the same folder read at night: blue-black surfaces, pale ink, and a lighter Sky Blue in place of Dress Blue.",
+    "keyCharacteristics": [
+      "Flat sheets separated by hairline rules; no shadows anywhere.",
+      "One action colour, used for both \"press this\" and \"this is selected\".",
+      "System typeface on every platform, in two weights.",
+      "A single centred column, capped at 800px, with 16px between sheets.",
+      "Light and dark sets with the same roles, chosen by the device."
+    ],
+    "rules": [
+      {
+        "name": "The One Action Colour Rule",
+        "body": "Dress Blue means \"you can press this\" or \"this is selected\", and nothing else. It is never used for decoration or for emphasis in running text.",
+        "section": "colors"
+      },
+      {
+        "name": "The Earned Green Rule",
+        "body": "Ribbon Green appears only where the reader comes out ahead or has finished something. A neutral figure stays in Ink.",
+        "section": "colors"
+      },
+      {
+        "name": "The Paired Sets Rule",
+        "body": "Every colour has a light and a dark value with the same role. A new colour is added to both sets or to neither.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Weights Rule",
+        "body": "Text is medium (500) or bold (700). Bold marks a name, a figure, or a label; it is not used for emphasis inside a sentence.",
+        "section": "typography"
+      },
+      {
+        "name": "The Figures Lead Rule",
+        "body": "On a card that shows money, the amount is the largest and heaviest thing on it, with its caption above in Slate at label size.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Sheet Rule",
+        "body": "A surface is distinguished by its tone and a hairline border, never by a shadow or a blur.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do take every colour from the theme, so the light and dark sets stay paired.",
+      "Do use Dress Blue only for things that can be pressed or are selected.",
+      "Do keep touch targets at least 48px tall.",
+      "Do separate surfaces with White Sheet on Parchment and a hairline Khaki Rule.",
+      "Do make the money figure the heaviest thing on any card that shows one.",
+      "Do build new screens from the shared components in `src/components/ui.tsx` before adding a new one."
+    ],
+    "donts": [
+      "Don't add shadows, blurs or gradients.",
+      "Don't use Ribbon Green for anything except money in the reader's favour or a completed item.",
+      "Don't introduce a third font weight or a custom typeface.",
+      "Don't use a branch's own colours for interface elements; the app serves all six branches and the seals already carry branch identity.",
+      "Don't write a colour value directly into a screen."
+    ]
+  }
+}

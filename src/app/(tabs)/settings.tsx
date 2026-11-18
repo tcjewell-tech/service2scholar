@@ -162,9 +162,16 @@ export default function SettingsScreen() {
           GI Bill rates for {data.rates.academicYear} (private school cap ${data.rates.privateTuitionCap.toLocaleString('en-US')},
           online housing ${data.rates.onlineMhaMonthly}/mo). Yellow Ribbon and housing rates come from the VA GI Bill Comparison Tool, and tuition and degree fields from
           the College Scorecard, as of {schoolDataAsOf}. Veteran graduation rates, application deadlines and scholarships are sample data.
-          Job-code mappings follow the O*NET Military Crossover Walk.
+        </ThemedText>
+        {/* Credit wording required by O*NET's CC BY 4.0 licence (onetcenter.org/license.html); keep it intact. */}
+        <ThemedText type="small" themeColor="textSecondary">
+          Job codes and their links to civilian occupations and degree fields include information from the O*NET Resource Center by the
+          U.S. Department of Labor, Employment and Training Administration (USDOL/ETA). Used under the CC BY 4.0 license. O*NET® is a
+          trademark of USDOL/ETA. Service-to-Scholar has modified all or some of this information. USDOL/ETA has not approved, endorsed,
+          or tested these modifications.
         </ThemedText>
         <Button title="VA GI Bill Comparison Tool ↗" variant="ghost" onPress={() => WebBrowser.openBrowserAsync('https://www.va.gov/education/gi-bill-comparison-tool/')} style={{ alignSelf: 'flex-start' }} />
+        <Button title="CC BY 4.0 license ↗" variant="ghost" onPress={() => WebBrowser.openBrowserAsync('https://creativecommons.org/licenses/by/4.0/')} style={{ alignSelf: 'flex-start' }} />
       </Card>
 
       <Button title="Delete all data on this device" variant="danger" onPress={confirmReset} style={{ alignSelf: 'center' }} />

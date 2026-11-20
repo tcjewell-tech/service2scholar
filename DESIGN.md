@@ -209,7 +209,8 @@ A navy-and-brass palette on warm paper: restrained, legible, and not tied to any
 
 ### Hierarchy
 - **Headline** (700, 26px, 32px line): the question or title at the top of an onboarding step.
-- **Title** (700, 17 to 18px): the profile name, the degree field on a match card, and the three cost figures on that card.
+- **Figure** (700, 20px, 26px line, fixed-width digits): the amount or date a card exists to show, such as the cost figures on a match card and the first-term date on Plan.
+- **Title** (700, 18px, 24px line): a name, such as the profile name or the school on a match card.
 - **Body** (500, 16px, 24px line): default text, choice titles, and button labels (button labels are 700).
 - **Label** (500 or 700, 14px, 20px line): secondary lines, chip text, field labels, hints and notices.
 - **Section label** (700, 12px, 0.8px letter spacing, uppercase): the heading above a group of cards, in Slate.
@@ -219,6 +220,10 @@ A navy-and-brass palette on warm paper: restrained, legible, and not tied to any
 **The Two Weights Rule.** Text is medium (500) or bold (700). Bold marks a name, a figure, or a label; it is not used for emphasis inside a sentence.
 
 **The Figures Lead Rule.** On a card that shows money, the amount is the largest and heaviest thing on it, with its caption above in Slate at label size.
+
+## Motion
+
+Sparing, and only where something appears or changes state. The Filters panel on Matches fades up over 220ms and fades out over 120ms. A Plan item's details fade in over 200ms. A tick scales in over 150ms. All three are skipped when the phone's Reduce Motion setting is on. Nothing loops, bounces, or plays when a screen opens.
 
 ## Layout
 
@@ -285,6 +290,9 @@ A row of equal segments, 4px tall with 4px gaps, one per onboarding step. Comple
 
 ### Match card (signature)
 One card per school. From top to bottom: the school name as the title with its location in Slate beneath, the cost figures in a row ("You pay (tuition)", "Paid to you", and "Net cost / yr" or "Left over / yr"; "Paid to you" is dropped when tuition is $0 because it then equals the left-over amount), a row of tags, and one row per matching degree field. Each field row is at least 48px tall, separated by a hairline Khaki Rule, with the field name in Dress Blue because it is the pressable part; pressing it opens that program's cost breakdown. A $0 tuition figure and a left-over amount are Ribbon Green. A saved program shows "★ In plan" in Brass Button at the right of its row. The reason for the match is stated once above the list when it is the same for every program, and under each field name otherwise.
+
+### Plan progress
+On the Plan tab's first card, the segmented progress bar sits under the first-term date with one segment per step. Completed segments are Ribbon Green, following the Earned Green rule. The caption reads "2 of 4 steps done", then "All 4 steps done" in Ribbon Green when the last one is ticked.
 
 ### Profile header
 The branch seal at 44px beside the profile name in title weight and a one-line Slate summary of branch, job code, GI Bill level and degree level. With more than one profile, a row of chips beneath switches between them.

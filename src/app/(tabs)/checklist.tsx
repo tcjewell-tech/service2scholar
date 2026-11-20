@@ -1,10 +1,11 @@
 import * as WebBrowser from 'expo-web-browser';
 import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
+import Animated, { FadeIn, ZoomIn } from 'react-native-reanimated';
 
 import { ProfileHeader } from '@/components/profile-header';
 import { ThemedText } from '@/components/themed-text';
-import { Button, Card, Chip, Notice, Row, Screen, SectionLabel } from '@/components/ui';
+import { Button, Card, Chip, Notice, Progress, Row, Screen, SectionLabel } from '@/components/ui';
 import { Spacing } from '@/constants/theme';
 import { useChecklist, useCostedMatches } from '@/hooks/use-plan';
 import { useTheme } from '@/hooks/use-theme';
@@ -22,6 +23,7 @@ export default function ChecklistScreen() {
   const items = useChecklist(profile);
   const costed = useCostedMatches(profile);
   const done = useAccount((s) => s.done);
+  const theme = useTheme();
   const [showDone, setShowDone] = useState(false);
   const [busy, setBusy] = useState(false);
   const today = todayIso();
@@ -42,6 +44,7 @@ export default function ChecklistScreen() {
   const overdue = open.filter((i) => i.dueDate < today);
   const soon = open.filter((i) => i.dueDate >= today && i.dueDate <= addDays(today, UPCOMING_DAYS));
   const completed = items.length - open.length;
+  const allDone = items.length > 0 && completed === items.length;
 
   const exportPlan = async () => {
     setBusy(true);
@@ -66,9 +69,11 @@ export default function ChecklistScreen() {
             <ThemedText type="small" themeColor="textSecondary">
               Target first term
             </ThemedText>
-            <ThemedText style={{ fontWeight: 700, fontSize: 20 }}>{formatDate(targetTermStart(profile.separationDate))}</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              {completed} of {items.length} steps done
+            <ThemedText type="figure">{formatDate(targetTermStart(profile.separationDate))}</ThemedText>
+            {/* One segment per step, filling in Ribbon Green as steps are ticked off. */}
+            <Progress step={completed} total={items.length} color={theme.success} />
+            <ThemedText type="small" style={{ color: allDone ? theme.success : theme.textSecondary }}>
+              {allDone ? `All ${items.length} steps done` : `${completed} of ${items.length} steps done`}
               {profile.savedProgramKeys.length === 0 ? ' · Add programs to your plan from Matches to get school deadlines' : ''}
             </ThemedText>
             <Button title={busy ? 'Preparing…' : 'Export or share as PDF'} variant="secondary" onPress={exportPlan} disabled={busy} />
@@ -129,10 +134,14 @@ function ChecklistRow({ item, today }: { item: ChecklistItem; today: string }) {
           onPress={() => setDone(item.id, !isDone)}
           hitSlop={10}
           style={[styles.check, { borderColor: isDone ? theme.success : theme.border, backgroundColor: isDone ? theme.success : 'transparent' }]}>
-          {isDone ? <ThemedText style={{ color: theme.onTint, fontWeight: 800, lineHeight: 18 }}>✓</ThemedText> : null}
+          {isDone ? (
+            <Animated.View entering={ZoomIn.duration(150)}>
+              <ThemedText style={{ color: theme.onTint, fontWeight: 700, lineHeight: 18 }}>✓</ThemedText>
+            </Animated.View>
+          ) : null}
         </Pressable>
         <Pressable style={{ flex: 1, gap: 2 }} onPress={() => setExpanded(!expanded)}>
-          <ThemedText style={{ fontWeight: 600, textDecorationLine: isDone ? 'line-through' : 'none', opacity: isDone ? 0.6 : 1 }}>
+          <ThemedText style={{ fontWeight: 700, textDecorationLine: isDone ? 'line-through' : 'none', opacity: isDone ? 0.6 : 1 }}>
             {item.title}
           </ThemedText>
           <ThemedText type="small" style={{ color: overdue ? theme.danger : theme.textSecondary }}>
@@ -142,7 +151,7 @@ function ChecklistRow({ item, today }: { item: ChecklistItem; today: string }) {
         </Pressable>
       </View>
       {expanded ? (
-        <View style={{ gap: Spacing.two, marginTop: Spacing.one }}>
+        <Animated.View entering={FadeIn.duration(200)} style={{ gap: Spacing.two, marginTop: Spacing.one }}>
           <ThemedText type="small">{item.detail}</ThemedText>
           {item.url ? (
             <Button title="Open link ↗" variant="ghost" onPress={() => WebBrowser.openBrowserAsync(item.url!)} style={{ alignSelf: 'flex-start' }} />
@@ -177,7 +186,7 @@ function ChecklistRow({ item, today }: { item: ChecklistItem; today: string }) {
               Email delivery arrives with account sign-in. Until then this item shows in-app only.
             </ThemedText>
           ) : null}
-        </View>
+        </Animated.View>
       ) : null}
     </Card>
   );

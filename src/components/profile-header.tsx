@@ -26,7 +26,7 @@ export function ProfileHeader() {
       <View style={styles.row}>
         <BranchSeal branch={profile.branch} size={44} />
         <View style={{ flex: 1 }}>
-          <ThemedText style={{ fontWeight: 700, fontSize: 18 }}>{profile.name}</ThemedText>
+          <ThemedText type="title">{profile.name}</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
             {detail} · {profile.giBillTier}% GI Bill · {profile.degreeLevel === 'bachelor' ? 'Bachelor’s' : 'Master’s'}
           </ThemedText>

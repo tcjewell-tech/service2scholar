@@ -1,6 +1,7 @@
 import { Link } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 
 import { ProfileHeader } from '@/components/profile-header';
 import { ThemedText } from '@/components/themed-text';
@@ -60,7 +61,7 @@ export default function MatchesScreen() {
 
       {costed.length === 0 ? (
         <Card>
-          <ThemedText style={{ fontWeight: 600 }}>No matches yet</ThemedText>
+          <ThemedText style={{ fontWeight: 700 }}>No matches yet</ThemedText>
           <ThemedText themeColor="textSecondary">
             Add a secondary job code, more skills, or fields of interest in Profiles to widen your matches.
           </ThemedText>
@@ -92,6 +93,7 @@ export default function MatchesScreen() {
             />
           </View>
           {showFilters ? (
+            <Animated.View entering={FadeInDown.duration(220)} exiting={FadeOut.duration(120)}>
             <Card>
               <SectionLabel>Net cost per year</SectionLabel>
               <Row>
@@ -134,11 +136,12 @@ export default function MatchesScreen() {
               </Row>
               {active ? <Button title="Clear filters" variant="ghost" onPress={() => setFilters(NO_FILTERS)} /> : null}
             </Card>
+            </Animated.View>
           ) : null}
           </View>
           {sorted.length === 0 ? (
             <Card>
-              <ThemedText style={{ fontWeight: 600 }}>No programs fit these filters</ThemedText>
+              <ThemedText style={{ fontWeight: 700 }}>No programs fit these filters</ThemedText>
               <ThemedText themeColor="textSecondary">Loosen a filter or pick a different field to see more.</ThemedText>
               <Button
                 title="Clear filters"
@@ -182,7 +185,7 @@ function SchoolCard({ programs, savedKeys, showWhy }: { programs: CostedMatch[];
   return (
     <Card>
       <View style={{ gap: 2 }}>
-        <ThemedText style={{ fontWeight: 700, fontSize: 17 }}>{school.name}</ThemedText>
+        <ThemedText type="title">{school.name}</ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
           {school.onlineOnly ? 'Online' : `${school.city}, ${school.state}`}
         </ThemedText>
@@ -241,7 +244,7 @@ function Figure({ label, value, strong, color }: { label: string; value: string;
       <ThemedText type="small" themeColor="textSecondary">
         {label}
       </ThemedText>
-      <ThemedText style={{ fontWeight: 700, fontSize: 18, color: color ?? (strong ? theme.success : theme.text) }}>
+      <ThemedText type="figure" style={{ color: color ?? (strong ? theme.success : theme.text) }}>
         {value}
       </ThemedText>
     </View>

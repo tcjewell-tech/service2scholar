@@ -77,8 +77,8 @@ export default function ProgramScreen() {
         {cost.lines.map((line) => (
           <View key={line.label} style={{ gap: 2 }}>
             <View style={styles.lineTop}>
-              <ThemedText style={{ flex: 1, fontWeight: 600 }}>{line.label}</ThemedText>
-              <ThemedText style={{ fontWeight: 700, color: line.amount < 0 ? theme.success : theme.text }}>
+              <ThemedText style={{ flex: 1, fontWeight: 700 }}>{line.label}</ThemedText>
+              <ThemedText style={{ fontWeight: 700, fontVariant: ['tabular-nums'], color: line.amount < 0 ? theme.success : theme.text }}>
                 {formatUsd(line.amount)}
               </ThemedText>
             </View>
@@ -90,13 +90,13 @@ export default function ProgramScreen() {
         <View style={[styles.total, { borderTopColor: theme.border }]}>
           <View style={styles.lineTop}>
             <ThemedText style={{ flex: 1, fontWeight: 700 }}>You pay the school</ThemedText>
-            <ThemedText style={{ fontWeight: 700 }}>{formatUsd(cost.tuitionOutOfPocket)}</ThemedText>
+            <ThemedText style={{ fontWeight: 700, fontVariant: ['tabular-nums'] }}>{formatUsd(cost.tuitionOutOfPocket)}</ThemedText>
           </View>
           <View style={styles.lineTop}>
             <ThemedText style={{ flex: 1, fontWeight: 700 }}>
               {cost.netCost < 0 ? 'Left over for living costs' : 'Net out-of-pocket'}
             </ThemedText>
-            <ThemedText style={{ fontWeight: 800, fontSize: 20, color: cost.netCost < 0 ? theme.success : theme.text }}>
+            <ThemedText type="figure" style={{ color: cost.netCost < 0 ? theme.success : theme.text }}>
               {formatUsd(Math.abs(cost.netCost))}
             </ThemedText>
           </View>

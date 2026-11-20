@@ -9,10 +9,17 @@ import { Spacing } from '@/constants/theme';
 import { useCostedMatches, type CostedMatch } from '@/hooks/use-plan';
 import { useTheme } from '@/hooks/use-theme';
 import { formatUsd } from '@/lib/costCalculator';
-import { activeFilterCount, filterMatches, locationOf, NO_FILTERS, type MatchFilters } from '@/lib/matchFilters';
+import {
+  activeFilterCount,
+  filterMatches,
+  groupBySchool,
+  locationOf,
+  NO_FILTERS,
+  sortMatches,
+  type MatchFilters,
+  type MatchSort,
+} from '@/lib/matchFilters';
 import { useActiveProfile } from '@/store';
-
-type Sort = 'cost' | 'match';
 
 const PRICE_CAPS: [string, number | null][] = [
   ['Any', null],
@@ -26,7 +33,7 @@ const PRICE_CAPS: [string, number | null][] = [
 export default function MatchesScreen() {
   const profile = useActiveProfile();
   const costed = useCostedMatches(profile);
-  const [sort, setSort] = useState<Sort>('cost');
+  const [sort, setSort] = useState<MatchSort>('cost');
   const [field, setField] = useState<string | null>(null);
   const [filters, setFilters] = useState<MatchFilters>(NO_FILTERS);
   const [showFilters, setShowFilters] = useState(false);
@@ -38,19 +45,17 @@ export default function MatchesScreen() {
   const active = activeFilterCount(filters);
   const set = (patch: Partial<MatchFilters>) => setFilters({ ...filters, ...patch });
   const filtered = filterMatches(field ? costed.filter((c) => c.match.cip === field) : costed, filters);
-  // Rank by what the user owes the school, not net cost: a big-city housing allowance would
-  // otherwise float expensive cities to the top even though rent there eats it.
-  const sorted = [...filtered].sort((a, b) =>
-    sort === 'cost'
-      ? a.cost.tuitionOutOfPocket - b.cost.tuitionOutOfPocket || b.match.score - a.match.score
-      : b.match.score - a.match.score
-  );
+  const sorted = sortMatches(filtered, sort);
+  const schools = groupBySchool(sorted);
+  // When every program matched for the same reason, say it once instead of on every row.
+  const whys = new Set(sorted.map((c) => c.match.reasons[0]));
+  const sharedWhy = whys.size === 1 ? [...whys][0] : null;
 
   return (
     <Screen>
       <ProfileHeader />
       <Notice>
-        School costs, Yellow Ribbon, housing rates and degree fields are government figures. Graduation rates are still sample data. For-profit schools are left out.
+        Costs are government figures. Graduation rates are sample data. For-profit schools are left out.
       </Notice>
 
       {costed.length === 0 ? (
@@ -77,7 +82,8 @@ export default function MatchesScreen() {
           </ScrollView>
           <View style={styles.countRow}>
             <ThemedText type="small" themeColor="textSecondary" style={{ flex: 1 }}>
-              Showing {sorted.length} of {costed.length} programs
+              {sorted.length === costed.length ? costed.length : `${sorted.length} of ${costed.length}`} programs at {schools.length}{' '}
+              {schools.length === 1 ? 'school' : 'schools'}
             </ThemedText>
             <Chip
               label={active ? `Filters (${active})` : 'Filters'}
@@ -143,9 +149,21 @@ export default function MatchesScreen() {
                 }}
               />
             </Card>
-          ) : null}
-          {sorted.map((c) => (
-            <MatchCard key={c.match.key} item={c} saved={profile.savedProgramKeys.includes(c.match.key)} />
+          ) : (
+            <ThemedText type="small" themeColor="textSecondary">
+              {sort === 'cost'
+                ? 'Ranked by tuition you pay, then by money left over.'
+                : 'Ranked by fit with your service and skills, weighted by graduation rate (sample data).'}
+              {sharedWhy ? ` Matched on: ${sharedWhy}` : ''}
+            </ThemedText>
+          )}
+          {schools.map((programs) => (
+            <SchoolCard
+              key={programs[0].match.key}
+              programs={programs}
+              savedKeys={profile.savedProgramKeys}
+              showWhy={!sharedWhy}
+            />
           ))}
         </>
       )}
@@ -153,54 +171,66 @@ export default function MatchesScreen() {
   );
 }
 
-function MatchCard({ item, saved }: { item: CostedMatch; saved: boolean }) {
+function SchoolCard({ programs, savedKeys, showWhy }: { programs: CostedMatch[]; savedKeys: string[]; showWhy: boolean }) {
   const theme = useTheme();
-  const { match, cost } = item;
+  // Cost depends on the school and degree level, so it is the same for every program here.
+  const { cost, match } = programs[0];
+  const { school } = match;
   const surplus = cost.netCost < 0;
+  const free = cost.tuitionOutOfPocket === 0;
 
   return (
-    <Link href={{ pathname: '/program/[key]', params: { key: match.key } }} asChild>
-      <Pressable style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1 })}>
-        <Card>
-          <View style={styles.top}>
-            <View style={{ flex: 1, gap: 2 }}>
-              <ThemedText type="small" themeColor="textSecondary">
-                {match.school.name}
-                {match.school.onlineOnly ? ' · Online' : ` · ${match.school.city}, ${match.school.state}`}
-              </ThemedText>
-              <ThemedText style={{ fontWeight: 700, fontSize: 17 }}>{match.fieldName}</ThemedText>
-            </View>
-            {saved ? (
-              <ThemedText type="smallBold" style={{ color: theme.accent }}>
-                ★ In plan
-              </ThemedText>
-            ) : null}
-          </View>
+    <Card>
+      <View style={{ gap: 2 }}>
+        <ThemedText style={{ fontWeight: 700, fontSize: 17 }}>{school.name}</ThemedText>
+        <ThemedText type="small" themeColor="textSecondary">
+          {school.onlineOnly ? 'Online' : `${school.city}, ${school.state}`}
+        </ThemedText>
+      </View>
 
-          <View style={styles.figures}>
-            <Figure label="You pay (tuition)" value={formatUsd(cost.tuitionOutOfPocket)} strong={cost.tuitionOutOfPocket === 0} />
-            <Figure label="Paid to you" value={formatUsd(cost.mha + cost.books)} />
-            <Figure
-              label={surplus ? 'Left over / yr' : 'Net cost / yr'}
-              value={formatUsd(Math.abs(cost.netCost))}
-              color={surplus ? theme.success : theme.text}
-            />
-          </View>
+      <View style={styles.figures}>
+        <Figure label="You pay (tuition)" value={formatUsd(cost.tuitionOutOfPocket)} strong={free} />
+        {/* With no tuition to pay, "Paid to you" equals what is left over, so it is shown once. */}
+        {free ? null : <Figure label="Paid to you" value={formatUsd(cost.mha + cost.books)} />}
+        <Figure
+          label={surplus ? 'Left over / yr' : 'Net cost / yr'}
+          value={formatUsd(Math.abs(cost.netCost))}
+          color={surplus ? theme.success : theme.text}
+        />
+      </View>
 
-          <Row style={{ gap: Spacing.one }}>
-            {cost.yellowRibbonEligible ? <Tag text="Yellow Ribbon" /> : null}
-            {match.school.control === 'public' ? <Tag text="Public" /> : <Tag text="Private nonprofit" />}
-            {match.school.veteranGradRate != null ? (
-              <Tag text={`${Math.round(match.school.veteranGradRate * 100)}% vet grad rate`} />
-            ) : null}
-          </Row>
-          <ThemedText type="small" themeColor="textSecondary" numberOfLines={2}>
-            Why: {match.reasons[0]}
-            {match.reasons.length > 1 ? ` (+${match.reasons.length - 1} more)` : ''}
-          </ThemedText>
-        </Card>
-      </Pressable>
-    </Link>
+      <Row style={{ gap: Spacing.one }}>
+        {cost.yellowRibbonEligible ? <Tag text="Yellow Ribbon" /> : null}
+        {school.control === 'public' ? <Tag text="Public" /> : <Tag text="Private nonprofit" />}
+        {school.veteranGradRate != null ? <Tag text={`${Math.round(school.veteranGradRate * 100)}% vet grad rate`} /> : null}
+      </Row>
+
+      <View>
+        {programs.map(({ match: m }) => (
+          <Link key={m.key} href={{ pathname: '/program/[key]', params: { key: m.key } }} asChild>
+            <Pressable accessibilityRole="link" style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}>
+              {/* Layout lives on this inner row: a Link only passes simple styles through to its child. */}
+              <View style={[styles.program, { borderTopColor: theme.border }]}>
+              <View style={{ flex: 1 }}>
+                <ThemedText style={{ fontWeight: 700, color: theme.tint }}>{m.fieldName}</ThemedText>
+                {showWhy ? (
+                  <ThemedText type="small" themeColor="textSecondary" numberOfLines={2}>
+                    Why: {m.reasons[0]}
+                    {m.reasons.length > 1 ? ` (+${m.reasons.length - 1} more)` : ''}
+                  </ThemedText>
+                ) : null}
+              </View>
+              {savedKeys.includes(m.key) ? (
+                <ThemedText type="smallBold" style={{ color: theme.accent }}>
+                  ★ In plan
+                </ThemedText>
+              ) : null}
+              </View>
+            </Pressable>
+          </Link>
+        ))}
+      </View>
+    </Card>
   );
 }
 
@@ -230,7 +260,8 @@ function Tag({ text }: { text: string }) {
 }
 
 const styles = StyleSheet.create({
-  top: { flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.two },
+  // 48 tall so each program is a comfortable tap on both iPhone and Android.
+  program: { flexDirection: 'row', alignItems: 'center', gap: Spacing.two, minHeight: 48, paddingVertical: Spacing.two, borderTopWidth: StyleSheet.hairlineWidth },
   // flex-end keeps the three amounts on one line when a label wraps to two.
   figures: { flexDirection: 'row', alignItems: 'flex-end', gap: Spacing.two },
   controls: { gap: Spacing.two },

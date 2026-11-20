@@ -27,3 +27,27 @@ export function filterMatches(costed: CostedMatch[], f: MatchFilters): CostedMat
       (!f.yellowRibbonOnly || c.cost.yellowRibbonEligible)
   );
 }
+
+export type MatchSort = 'cost' | 'match';
+
+/**
+ * 'cost' ranks by tuition owed. At 100% GI Bill that is often $0 everywhere, so ties fall to
+ * money left over (a real figure) before match score, which leans on sample graduation rates.
+ */
+export function sortMatches(costed: CostedMatch[], sort: MatchSort): CostedMatch[] {
+  return [...costed].sort((a, b) =>
+    sort === 'cost'
+      ? a.cost.tuitionOutOfPocket - b.cost.tuitionOutOfPocket || a.cost.netCost - b.cost.netCost || b.match.score - a.match.score
+      : b.match.score - a.match.score
+  );
+}
+
+/** One group per school, in the order each school first appears; cost is the same for every program in a group. */
+export function groupBySchool(costed: CostedMatch[]): CostedMatch[][] {
+  const groups = new Map<string, CostedMatch[]>();
+  for (const c of costed) {
+    const key = `${c.match.school.id}:${c.match.level}`;
+    groups.set(key, [...(groups.get(key) ?? []), c]);
+  }
+  return [...groups.values()];
+}

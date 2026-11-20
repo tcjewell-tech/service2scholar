@@ -9,6 +9,7 @@ import {
   type TextInputProps,
   type ViewStyle,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
@@ -17,6 +18,7 @@ import { ThemedText } from './themed-text';
 
 export function Screen({ children, footer }: { children: ReactNode; footer?: ReactNode }) {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
       <ScrollView
@@ -26,7 +28,12 @@ export function Screen({ children, footer }: { children: ReactNode; footer?: Rea
         <View style={styles.inner}>{children}</View>
       </ScrollView>
       {footer ? (
-        <View style={[styles.footer, { borderTopColor: theme.border, backgroundColor: theme.background }]}>
+        <View
+          style={[
+            styles.footer,
+            // Android draws the app behind its navigation bar, so lift the buttons above it.
+            { borderTopColor: theme.border, backgroundColor: theme.background, paddingBottom: Spacing.three + insets.bottom },
+          ]}>
           <View style={styles.footerInner}>{footer}</View>
         </View>
       ) : null}

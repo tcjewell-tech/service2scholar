@@ -224,7 +224,7 @@ A navy-and-brass palette on warm paper: restrained, legible, and not tied to any
 
 A single scrolling column. Content sits in a centred container no wider than 800px, with 16px side padding, 16px above the first sheet, and 64px of clear space at the end so the last item scrolls free of the tab bar. Sheets and other blocks are 16px apart; items inside a sheet are 8px apart.
 
-Spacing comes from one scale: 2, 4, 8, 16, 24, 32, 64. Related chips and tags wrap in rows with 8px gaps. Onboarding steps add a fixed footer, separated by a hairline rule, holding "Back" and "Continue" side by side at equal width.
+Spacing comes from one scale: 2, 4, 8, 16, 24, 32, 64. Related chips and tags wrap in rows with 8px gaps. Controls that act on the same list sit 8px apart so they read as one group, set off from the 16px between sheets. A chip row whose length depends on data, such as the degree fields on Matches, is one swipeable line running to the screen edges instead of wrapping. Onboarding steps add a fixed footer, separated by a hairline rule, holding "Back" and "Continue" side by side at equal width.
 
 There are no breakpoints. On a wide screen the column stays centred at its cap and the margins grow.
 

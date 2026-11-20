@@ -284,7 +284,7 @@ Steady and plain: solid, generously sized, no flourishes.
 A row of equal segments, 4px tall with 4px gaps, one per onboarding step. Completed steps are Dress Blue; the rest are Blotter.
 
 ### Match card (signature)
-A card that opens the program's cost breakdown when pressed. From top to bottom: the school and its location in Slate, the degree field as the title, three figures in a row ("You pay (tuition)", "Paid to you", and "Net cost / yr" or "Left over / yr"), a row of tags, and a one-line "Why:" reason. A $0 tuition figure and a left-over amount are Ribbon Green. A saved program shows "★ In plan" in Brass Button at the top right.
+One card per school. From top to bottom: the school name as the title with its location in Slate beneath, the cost figures in a row ("You pay (tuition)", "Paid to you", and "Net cost / yr" or "Left over / yr"; "Paid to you" is dropped when tuition is $0 because it then equals the left-over amount), a row of tags, and one row per matching degree field. Each field row is at least 48px tall, separated by a hairline Khaki Rule, with the field name in Dress Blue because it is the pressable part; pressing it opens that program's cost breakdown. A $0 tuition figure and a left-over amount are Ribbon Green. A saved program shows "★ In plan" in Brass Button at the right of its row. The reason for the match is stated once above the list when it is the same for every program, and under each field name otherwise.
 
 ### Profile header
 The branch seal at 44px beside the profile name in title weight and a one-line Slate summary of branch, job code, GI Bill level and degree level. With more than one profile, a row of chips beneath switches between them.

@@ -89,14 +89,20 @@ export default function SettingsScreen() {
         </View>
         <View style={{ gap: Spacing.two }}>
           <ThemedText type="smallBold">Quiet hours</ThemedText>
+          <ThemedText type="small" themeColor="textSecondary">
+            From
+          </ThemedText>
           <Row>
             {QUIET_START.map((h) => (
-              <Chip key={h} label={`from ${hourLabel(h)}`} selected={s.quietStart === h} onPress={() => update({ quietStart: h })} />
+              <Chip key={h} label={hourLabel(h)} selected={s.quietStart === h} onPress={() => update({ quietStart: h })} />
             ))}
           </Row>
+          <ThemedText type="small" themeColor="textSecondary">
+            Until
+          </ThemedText>
           <Row>
             {QUIET_END.map((h) => (
-              <Chip key={h} label={`until ${hourLabel(h)}`} selected={s.quietEnd === h} onPress={() => update({ quietEnd: h })} />
+              <Chip key={h} label={hourLabel(h)} selected={s.quietEnd === h} onPress={() => update({ quietEnd: h })} />
             ))}
           </Row>
         </View>

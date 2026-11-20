@@ -1,6 +1,6 @@
 import { Link } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { ProfileHeader } from '@/components/profile-header';
 import { ThemedText } from '@/components/themed-text';
@@ -62,15 +62,29 @@ export default function MatchesScreen() {
         </Card>
       ) : (
         <>
+          {/* Controls sit closer to each other than to the cards, so they read as one group. */}
+          <View style={styles.controls}>
           <Row>
             <Chip label="Lowest cost to you" selected={sort === 'cost'} onPress={() => setSort('cost')} />
             <Chip label="Best match" selected={sort === 'match'} onPress={() => setSort('match')} />
+          </Row>
+          {/* One swipeable line that runs to the screen edges, however many fields match. */}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.bleed} contentContainerStyle={styles.fieldRow}>
+            <Chip label={`All fields (${costed.length})`} selected={!field} onPress={() => setField(null)} />
+            {fields.map(([cip, name]) => (
+              <Chip key={cip} label={name} selected={field === cip} onPress={() => setField(field === cip ? null : cip)} />
+            ))}
+          </ScrollView>
+          <View style={styles.countRow}>
+            <ThemedText type="small" themeColor="textSecondary" style={{ flex: 1 }}>
+              Showing {sorted.length} of {costed.length} programs
+            </ThemedText>
             <Chip
               label={active ? `Filters (${active})` : 'Filters'}
               selected={showFilters || active > 0}
               onPress={() => setShowFilters(!showFilters)}
             />
-          </Row>
+          </View>
           {showFilters ? (
             <Card>
               <SectionLabel>Net cost per year</SectionLabel>
@@ -115,12 +129,7 @@ export default function MatchesScreen() {
               {active ? <Button title="Clear filters" variant="ghost" onPress={() => setFilters(NO_FILTERS)} /> : null}
             </Card>
           ) : null}
-          <Row>
-            <Chip label={`All fields (${costed.length})`} selected={!field} onPress={() => setField(null)} />
-            {fields.map(([cip, name]) => (
-              <Chip key={cip} label={name} selected={field === cip} onPress={() => setField(field === cip ? null : cip)} />
-            ))}
-          </Row>
+          </View>
           {sorted.length === 0 ? (
             <Card>
               <ThemedText style={{ fontWeight: 600 }}>No programs fit these filters</ThemedText>
@@ -134,11 +143,7 @@ export default function MatchesScreen() {
                 }}
               />
             </Card>
-          ) : (
-            <ThemedText type="small" themeColor="textSecondary">
-              Showing {sorted.length} of {costed.length} programs
-            </ThemedText>
-          )}
+          ) : null}
           {sorted.map((c) => (
             <MatchCard key={c.match.key} item={c} saved={profile.savedProgramKeys.includes(c.match.key)} />
           ))}
@@ -226,6 +231,11 @@ function Tag({ text }: { text: string }) {
 
 const styles = StyleSheet.create({
   top: { flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.two },
-  figures: { flexDirection: 'row', gap: Spacing.two },
+  // flex-end keeps the three amounts on one line when a label wraps to two.
+  figures: { flexDirection: 'row', alignItems: 'flex-end', gap: Spacing.two },
+  controls: { gap: Spacing.two },
+  bleed: { marginHorizontal: -Spacing.three },
+  fieldRow: { gap: Spacing.two, paddingHorizontal: Spacing.three },
+  countRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.two },
   tag: { borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 },
 });

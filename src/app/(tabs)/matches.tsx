@@ -4,25 +4,38 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ProfileHeader } from '@/components/profile-header';
 import { ThemedText } from '@/components/themed-text';
-import { Card, Chip, Notice, Row, Screen } from '@/components/ui';
+import { Button, Card, Chip, Notice, Row, Screen, SectionLabel } from '@/components/ui';
 import { Spacing } from '@/constants/theme';
 import { useCostedMatches, type CostedMatch } from '@/hooks/use-plan';
 import { useTheme } from '@/hooks/use-theme';
 import { formatUsd } from '@/lib/costCalculator';
+import { activeFilterCount, filterMatches, locationOf, NO_FILTERS, type MatchFilters } from '@/lib/matchFilters';
 import { useActiveProfile } from '@/store';
 
 type Sort = 'cost' | 'match';
+
+const PRICE_CAPS: [string, number | null][] = [
+  ['Any', null],
+  ['$0', 0],
+  ['Up to $5,000', 5000],
+  ['Up to $15,000', 15000],
+];
 
 export default function MatchesScreen() {
   const profile = useActiveProfile();
   const costed = useCostedMatches(profile);
   const [sort, setSort] = useState<Sort>('cost');
   const [field, setField] = useState<string | null>(null);
+  const [filters, setFilters] = useState<MatchFilters>(NO_FILTERS);
+  const [showFilters, setShowFilters] = useState(false);
 
   if (!profile) return null;
 
   const fields = [...new Map(costed.map((c) => [c.match.cip, c.match.fieldName])).entries()];
-  const filtered = field ? costed.filter((c) => c.match.cip === field) : costed;
+  const locations = [...new Set(costed.map(locationOf))].sort();
+  const active = activeFilterCount(filters);
+  const set = (patch: Partial<MatchFilters>) => setFilters({ ...filters, ...patch });
+  const filtered = filterMatches(field ? costed.filter((c) => c.match.cip === field) : costed, filters);
   // Rank by what the user owes the school, not net cost: a big-city housing allowance would
   // otherwise float expensive cities to the top even though rent there eats it.
   const sorted = [...filtered].sort((a, b) =>
@@ -50,13 +63,80 @@ export default function MatchesScreen() {
           <Row>
             <Chip label="Lowest cost to you" selected={sort === 'cost'} onPress={() => setSort('cost')} />
             <Chip label="Best match" selected={sort === 'match'} onPress={() => setSort('match')} />
+            <Chip
+              label={active ? `Filters (${active})` : 'Filters'}
+              selected={showFilters || active > 0}
+              onPress={() => setShowFilters(!showFilters)}
+            />
           </Row>
+          {showFilters ? (
+            <Card>
+              <SectionLabel>You pay (tuition) per year</SectionLabel>
+              <Row>
+                {PRICE_CAPS.map(([label, cap]) => (
+                  <Chip key={label} label={label} selected={filters.maxTuition === cap} onPress={() => set({ maxTuition: cap })} />
+                ))}
+              </Row>
+              <SectionLabel>State</SectionLabel>
+              <Row>
+                <Chip label="Anywhere" selected={filters.locations.length === 0} onPress={() => set({ locations: [] })} />
+                {locations.map((loc) => (
+                  <Chip
+                    key={loc}
+                    label={loc}
+                    selected={filters.locations.includes(loc)}
+                    onPress={() =>
+                      set({
+                        locations: filters.locations.includes(loc)
+                          ? filters.locations.filter((l) => l !== loc)
+                          : [...filters.locations, loc],
+                      })
+                    }
+                  />
+                ))}
+              </Row>
+              <SectionLabel>School type</SectionLabel>
+              <Row>
+                <Chip label="Any" selected={!filters.control} onPress={() => set({ control: null })} />
+                <Chip label="Public" selected={filters.control === 'public'} onPress={() => set({ control: 'public' })} />
+                <Chip
+                  label="Private nonprofit"
+                  selected={filters.control === 'private_nonprofit'}
+                  onPress={() => set({ control: 'private_nonprofit' })}
+                />
+                <Chip
+                  label="Yellow Ribbon"
+                  selected={filters.yellowRibbonOnly}
+                  onPress={() => set({ yellowRibbonOnly: !filters.yellowRibbonOnly })}
+                />
+              </Row>
+              {active ? <Button title="Clear filters" variant="ghost" onPress={() => setFilters(NO_FILTERS)} /> : null}
+            </Card>
+          ) : null}
           <Row>
             <Chip label={`All fields (${costed.length})`} selected={!field} onPress={() => setField(null)} />
             {fields.map(([cip, name]) => (
               <Chip key={cip} label={name} selected={field === cip} onPress={() => setField(field === cip ? null : cip)} />
             ))}
           </Row>
+          {sorted.length === 0 ? (
+            <Card>
+              <ThemedText style={{ fontWeight: 600 }}>No programs fit these filters</ThemedText>
+              <ThemedText themeColor="textSecondary">Loosen a filter or pick a different field to see more.</ThemedText>
+              <Button
+                title="Clear filters"
+                variant="secondary"
+                onPress={() => {
+                  setFilters(NO_FILTERS);
+                  setField(null);
+                }}
+              />
+            </Card>
+          ) : (
+            <ThemedText type="small" themeColor="textSecondary">
+              Showing {sorted.length} of {costed.length} programs
+            </ThemedText>
+          )}
           {sorted.map((c) => (
             <MatchCard key={c.match.key} item={c} saved={profile.savedProgramKeys.includes(c.match.key)} />
           ))}

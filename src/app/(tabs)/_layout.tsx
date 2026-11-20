@@ -1,4 +1,5 @@
-import { Ionicons } from '@expo/vector-icons';
+// Importing the one set directly keeps the other icon fonts (about 4 MB) out of the app.
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { Redirect } from 'expo-router';
 import { Tabs } from 'expo-router/js-tabs';
 import type { ComponentProps } from 'react';

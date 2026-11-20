@@ -165,7 +165,7 @@ export function Choice({
       ]}>
       {left}
       <View style={{ flex: 1 }}>
-        <ThemedText style={{ fontWeight: 600 }}>{title}</ThemedText>
+        <ThemedText style={{ fontWeight: 700 }}>{title}</ThemedText>
         {subtitle ? (
           <ThemedText type="small" themeColor="textSecondary">
             {subtitle}
@@ -223,14 +223,14 @@ export function Notice({ children, tone = 'info' }: { children: ReactNode; tone?
   );
 }
 
-export function Progress({ step, total }: { step: number; total: number }) {
+export function Progress({ step, total, color }: { step: number; total: number; color?: string }) {
   const theme = useTheme();
   return (
     <View style={styles.progress} accessibilityLabel={`Step ${step} of ${total}`}>
       {Array.from({ length: total }, (_, i) => (
         <View
           key={i}
-          style={[styles.progressBar, { backgroundColor: i < step ? theme.tint : theme.backgroundSelected }]}
+          style={[styles.progressBar, { backgroundColor: i < step ? (color ?? theme.tint) : theme.backgroundSelected }]}
         />
       ))}
     </View>

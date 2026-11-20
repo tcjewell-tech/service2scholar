@@ -83,7 +83,7 @@ export default function TimelineStep() {
       {draft.vaAppointments.map((a) => (
         <Card key={a.id} style={{ flexDirection: 'row', alignItems: 'center' }}>
           <View style={{ flex: 1 }}>
-            <ThemedText style={{ fontWeight: 600 }}>{a.title}</ThemedText>
+            <ThemedText style={{ fontWeight: 700 }}>{a.title}</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
               {formatDate(a.date)}
             </ThemedText>

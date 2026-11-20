@@ -16,9 +16,11 @@ type Sort = 'cost' | 'match';
 
 const PRICE_CAPS: [string, number | null][] = [
   ['Any', null],
-  ['$0', 0],
-  ['Up to $5,000', 5000],
-  ['Up to $15,000', 15000],
+  ['Up to $10,000', 10000],
+  ['Break even or better', 0],
+  ['$10,000+ left over', -10000],
+  ['$20,000+ left over', -20000],
+  ['$30,000+ left over', -30000],
 ];
 
 export default function MatchesScreen() {
@@ -71,10 +73,10 @@ export default function MatchesScreen() {
           </Row>
           {showFilters ? (
             <Card>
-              <SectionLabel>You pay (tuition) per year</SectionLabel>
+              <SectionLabel>Net cost per year</SectionLabel>
               <Row>
                 {PRICE_CAPS.map(([label, cap]) => (
-                  <Chip key={label} label={label} selected={filters.maxTuition === cap} onPress={() => set({ maxTuition: cap })} />
+                  <Chip key={label} label={label} selected={filters.maxNetCost === cap} onPress={() => set({ maxNetCost: cap })} />
                 ))}
               </Row>
               <SectionLabel>State</SectionLabel>

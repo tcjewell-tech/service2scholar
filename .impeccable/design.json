@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-18T18:34:54.873Z",
+  "generatedAt": "2026-11-21T01:30:00.000Z",
   "title": "Design System: Service to Scholar",
   "extensions": {
     "colorMeta": {
@@ -372,7 +372,11 @@
       },
       "title": {
         "displayName": "Title",
-        "purpose": "Profile name, degree field on a match card, and cost figures."
+        "purpose": "A name: the profile name or the school on a match card."
+      },
+      "figure": {
+        "displayName": "Figure",
+        "purpose": "The amount or date a card exists to show, in fixed-width digits."
       },
       "body": {
         "displayName": "Body",
@@ -453,21 +457,21 @@
       "kind": "custom",
       "refersTo": "notice",
       "description": "States where figures come from; the left edge marks information or a warning.",
-      "html": "<div class=\"ds-notice\">School costs, Yellow Ribbon, housing rates and degree fields are government figures. Graduation rates are still sample data.</div>",
-      "css": ".ds-notice { font-family: system-ui, sans-serif; background: #FFFFFF; color: #5B6573; border-left: 3px solid #1F3A5F; border-radius: 8px; padding: 16px; font-size: 14px; line-height: 20px; font-weight: 500; width: 320px; box-sizing: border-box; }"
+      "html": "<div class=\"ds-notice\">Push reminders work in the iPhone and Android app.</div><div class=\"ds-notice ds-notice-warning\">Costs are government figures. Graduation rates are sample data. For-profit schools are left out.</div>",
+      "css": ".ds-notice { font-family: system-ui, sans-serif; background: #FFFFFF; color: #5B6573; border-left: 3px solid #1F3A5F; border-radius: 8px; padding: 16px; font-size: 14px; line-height: 20px; font-weight: 500; width: 320px; box-sizing: border-box; } .ds-notice + .ds-notice { margin-top: 8px; } .ds-notice-warning { border-left-color: #9A6A00; }"
     },
     {
       "name": "Match Card",
       "kind": "card",
       "refersTo": "card",
-      "description": "One matched program with its three cost figures, tags and reason.",
-      "html": "<div class=\"ds-card\" tabindex=\"0\"><div class=\"ds-card-meta\">Columbia University – School of General Studies · New York, NY</div><div class=\"ds-card-title\">Computer Science</div><div class=\"ds-card-figures\"><div><span>You pay (tuition)</span><b class=\"ds-good\">$0</b></div><div><span>Paid to you</span><b>$46,630</b></div><div><span>Left over / yr</span><b class=\"ds-good\">$46,630</b></div></div><div class=\"ds-card-tags\"><span>Yellow Ribbon</span><span>Private nonprofit</span></div><div class=\"ds-card-meta\">Why: Primary 17C (Cyber Operations Specialist) → Information Security Analysts</div></div>",
-      "css": ".ds-card { font-family: system-ui, sans-serif; background: #FFFFFF; color: #14202E; border: 0.5px solid #DEDAD0; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 8px; width: 340px; box-sizing: border-box; cursor: pointer; } .ds-card:hover { opacity: 0.85; } .ds-card:focus-visible { outline: 2px solid #1F3A5F; outline-offset: 2px; } .ds-card-meta { font-size: 14px; line-height: 20px; color: #5B6573; font-weight: 500; } .ds-card-title { font-size: 17px; font-weight: 700; } .ds-card-figures { display: flex; gap: 8px; } .ds-card-figures div { flex: 1; display: flex; flex-direction: column; } .ds-card-figures span { font-size: 14px; line-height: 20px; color: #5B6573; } .ds-card-figures b { font-size: 18px; font-weight: 700; } .ds-good { color: #2F7D4F; } .ds-card-tags { display: flex; flex-wrap: wrap; gap: 4px; } .ds-card-tags span { background: #E6EAF0; border-radius: 6px; padding: 2px 8px; font-size: 12px; line-height: 16px; }"
+      "description": "One school with its cost figures, tags, and a row for each matching degree field.",
+      "html": "<div class=\"ds-card\"><div><div class=\"ds-card-title\">Columbia University – School of General Studies</div><div class=\"ds-card-meta\">New York, NY</div></div><div class=\"ds-card-figures\"><div><span>You pay (tuition)</span><b class=\"ds-good\">$0</b></div><div><span>Left over / yr</span><b class=\"ds-good\">$46,630</b></div></div><div class=\"ds-card-tags\"><span>Yellow Ribbon</span><span>Private nonprofit</span></div><div><a class=\"ds-card-row\" href=\"#\">Computer Science</a><a class=\"ds-card-row\" href=\"#\"><span>Information Technology<em>Related field</em></span><i>★ In plan</i></a></div></div>",
+      "css": ".ds-card { font-family: system-ui, sans-serif; background: #FFFFFF; color: #14202E; border: 0.5px solid #DEDAD0; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 8px; width: 340px; box-sizing: border-box; } .ds-card-meta { font-size: 14px; line-height: 20px; color: #5B6573; font-weight: 500; } .ds-card-title { font-size: 18px; line-height: 24px; font-weight: 700; } .ds-card-figures { display: flex; align-items: flex-end; gap: 8px; } .ds-card-figures div { flex: 1; display: flex; flex-direction: column; } .ds-card-figures span { font-size: 14px; line-height: 20px; color: #5B6573; } .ds-card-figures b { font-size: 20px; line-height: 26px; font-weight: 700; font-variant-numeric: tabular-nums; } .ds-good { color: #2F7D4F; } .ds-card-tags { display: flex; flex-wrap: wrap; gap: 4px; } .ds-card-tags span, .ds-card-row em { background: #E6EAF0; color: #14202E; border-radius: 6px; padding: 2px 8px; font-size: 12px; line-height: 16px; font-weight: 500; font-style: normal; } .ds-card-row { display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 8px 0; box-sizing: border-box; border-top: 0.5px solid #DEDAD0; color: #1F3A5F; font-weight: 700; text-decoration: none; } .ds-card-row:active { opacity: 0.6; } .ds-card-row:focus-visible { outline: 2px solid #1F3A5F; outline-offset: 2px; } .ds-card-row span { flex: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; } .ds-card-row i { font-style: normal; font-size: 14px; color: #B8892B; }"
     },
     {
       "name": "Progress Bar",
       "kind": "custom",
-      "description": "One segment per onboarding step; completed steps are filled.",
+      "description": "One segment per step; completed steps are filled. Dress Blue in onboarding, Ribbon Green on Plan.",
       "html": "<div class=\"ds-progress\" aria-label=\"Step 3 of 7\"><i class=\"ds-on\"></i><i class=\"ds-on\"></i><i class=\"ds-on\"></i><i></i><i></i><i></i><i></i></div>",
       "css": ".ds-progress { display: flex; gap: 4px; width: 320px; } .ds-progress i { flex: 1; height: 4px; border-radius: 2px; background: #E6EAF0; } .ds-progress .ds-on { background: #1F3A5F; }"
     }

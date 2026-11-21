@@ -20,6 +20,7 @@ import {
   type MatchFilters,
   type MatchSort,
 } from '@/lib/matchFilters';
+import { isRelatedOnly } from '@/lib/matching';
 import { useActiveProfile } from '@/store';
 
 const PRICE_CAPS: [string, number | null][] = [
@@ -55,7 +56,8 @@ export default function MatchesScreen() {
   return (
     <Screen>
       <ProfileHeader />
-      <Notice>
+      {/* Amber while made-up graduation rates sit on every card; back to plain once they are real. */}
+      <Notice tone="warning">
         Costs are government figures. Graduation rates are sample data. For-profit schools are left out.
       </Notice>
 
@@ -158,6 +160,9 @@ export default function MatchesScreen() {
                 ? 'Ranked by tuition you pay, then by money left over.'
                 : 'Ranked by fit with your service and skills, weighted by graduation rate (sample data).'}
               {sharedWhy ? ` Matched on: ${sharedWhy}` : ''}
+              {sorted.some((c) => isRelatedOnly(c.match))
+                ? ' “Related field” marks a degree close to your job’s field, not a direct match.'
+                : ''}
             </ThemedText>
           )}
           {schools.map((programs) => (
@@ -214,8 +219,10 @@ function SchoolCard({ programs, savedKeys, showWhy }: { programs: CostedMatch[];
             <Pressable accessibilityRole="link" style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}>
               {/* Layout lives on this inner row: a Link only passes simple styles through to its child. */}
               <View style={[styles.program, { borderTopColor: theme.border }]}>
-              <View style={{ flex: 1 }}>
+              <View style={{ flex: 1, gap: Spacing.half }}>
                 <ThemedText style={{ fontWeight: 700, color: theme.tint }}>{m.fieldName}</ThemedText>
+                {/* Shown whether or not the reason line is, so a looser match never passes as a direct one. */}
+                {isRelatedOnly(m) ? <Tag text="Related field" /> : null}
                 {showWhy ? (
                   <ThemedText type="small" themeColor="textSecondary" numberOfLines={2}>
                     Why: {m.reasons[0]}
@@ -271,5 +278,5 @@ const styles = StyleSheet.create({
   bleed: { marginHorizontal: -Spacing.three },
   fieldRow: { gap: Spacing.two, paddingHorizontal: Spacing.three },
   countRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.two },
-  tag: { borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 },
+  tag: { alignSelf: 'flex-start', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 },
 });

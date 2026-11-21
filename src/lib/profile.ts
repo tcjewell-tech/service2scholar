@@ -39,13 +39,13 @@ export interface Profile {
   plannedScholarshipIds: string[];
 }
 
-export const BRANCHES: Record<Branch, { name: string; short: string; color: string }> = {
-  army: { name: 'U.S. Army', short: 'Army', color: '#4B5320' },
-  navy: { name: 'U.S. Navy', short: 'Navy', color: '#000080' },
-  airforce: { name: 'U.S. Air Force', short: 'Air Force', color: '#00308F' },
-  marines: { name: 'U.S. Marine Corps', short: 'Marine Corps', color: '#A6192E' },
-  coastguard: { name: 'U.S. Coast Guard', short: 'Coast Guard', color: '#E35205' },
-  spaceforce: { name: 'U.S. Space Force', short: 'Space Force', color: '#1C2841' },
+export const BRANCHES: Record<Branch, { name: string; short: string }> = {
+  army: { name: 'U.S. Army', short: 'Army' },
+  navy: { name: 'U.S. Navy', short: 'Navy' },
+  airforce: { name: 'U.S. Air Force', short: 'Air Force' },
+  marines: { name: 'U.S. Marine Corps', short: 'Marine Corps' },
+  coastguard: { name: 'U.S. Coast Guard', short: 'Coast Guard' },
+  spaceforce: { name: 'U.S. Space Force', short: 'Space Force' },
 };
 
 export const BRANCH_ORDER: Branch[] = ['army', 'navy', 'airforce', 'marines', 'coastguard', 'spaceforce'];

@@ -36,6 +36,13 @@ typography:
     fontFamily: "system-ui, sans-serif"
     fontSize: "18px"
     fontWeight: 700
+    lineHeight: "24px"
+  figure:
+    fontFamily: "system-ui, sans-serif"
+    fontSize: "20px"
+    fontWeight: 700
+    lineHeight: "26px"
+    fontFeature: "tnum"
   body:
     fontFamily: "system-ui, sans-serif"
     fontSize: "16px"
@@ -158,7 +165,7 @@ components:
 
 The app looks like a well-prepared transition packet: everything the reader needs, in order, with nothing decorative. Each screen is a stack of plain sheets on a parchment desk. A sheet holds one subject (a school, a cost breakdown, a group of settings) and states its facts without flourish. The reader is making a decision that involves money and deadlines, so the interface stays calm and lets the figures speak.
 
-Controls are steady and plain: solid, generously sized, easy to hit with a thumb. Colour is used sparingly. Dress Blue marks what can be pressed and what is selected; one green marks money that comes back to the reader; Brass Button appears once, for a saved program. Everything else is ink on paper.
+Controls are steady and plain: solid, generously sized, easy to hit with a thumb. Colour is used sparingly. Dress Blue marks what can be pressed and what is selected; one green marks money that comes back to the reader; Brass Button marks the reader's own picks. Everything else is ink on paper.
 
 The system ships in two matching sets, a light one and a dark one, and follows the device setting. The dark set is the same folder read at night: blue-black surfaces, pale ink, and a lighter Sky Blue in place of Dress Blue.
 
@@ -177,11 +184,11 @@ A navy-and-brass palette on warm paper: restrained, legible, and not tied to any
 - **Dress Blue** (`dress-blue`): the action colour. Fills primary buttons and selected chips, outlines a selected choice row, colours ghost-button text, the active tab, the progress bar, and the left edge of an information notice. In the dark set its role is taken by **Sky Blue** (`sky-blue`), with **Night Watch** text on top.
 
 ### Secondary
-- **Brass Button** (`brass-button`): a single mark of distinction. Today it colours only the "★ In plan" label on a saved program. **Polished Brass** (`polished-brass`) in the dark set.
+- **Brass Button** (`brass-button`): marks the reader's own picks, in two places: the "★ In plan" label on a saved program and the "Primary" label beside the chosen job code in onboarding. **Polished Brass** (`polished-brass`) in the dark set.
 
 ### Tertiary
 - **Ribbon Green** (`ribbon-green`): money in the reader's favour (a $0 tuition figure, a "Left over / yr" amount) and a completed checklist item. **Night Green** in the dark set.
-- **Caution Amber** (`caution-amber`): the left edge of a warning notice. **Night Amber** in the dark set.
+- **Caution Amber** (`caution-amber`): the left edge of a warning notice (see Notices for when a notice is a warning). **Night Amber** in the dark set.
 - **Signal Red** (`signal-red`): destructive button text, a field in error, an overdue checklist item. **Night Red** in the dark set.
 
 ### Neutral
@@ -198,6 +205,26 @@ A navy-and-brass palette on warm paper: restrained, legible, and not tied to any
 **The Earned Green Rule.** Ribbon Green appears only where the reader comes out ahead or has finished something. A neutral figure stays in Ink.
 
 **The Paired Sets Rule.** Every colour has a light and a dark value with the same role. A new colour is added to both sets or to neither.
+
+### Source of truth
+The values live in code. `src/constants/theme.ts` holds colour, spacing and the content width; `src/components/themed-text.tsx` holds the text roles; `src/components/ui.tsx` holds component sizes. This document describes those values under friendlier names, and `.impeccable/design.json` is a preview copy of this document. When they disagree, the code is right.
+
+**The Code First Rule.** Change the value in code, then this document, then `.impeccable/design.json`, in the same pull request. `__tests__/designTokens-test.ts` fails when a colour, spacing step or the content width differs between the three.
+
+| In `theme.ts` | Light | Dark |
+| --- | --- | --- |
+| `tint` | Dress Blue | Sky Blue |
+| `onTint` | On Dress Blue | On Sky Blue |
+| `accent` | Brass Button | Polished Brass |
+| `background` | Parchment | Night Watch |
+| `backgroundElement` | White Sheet | Night Sheet |
+| `backgroundSelected` | Blotter | Night Blotter |
+| `text` | Ink | Night Ink |
+| `textSecondary` | Slate | Night Slate |
+| `border` | Khaki Rule | Night Rule |
+| `success` | Ribbon Green | Night Green |
+| `warning` | Caution Amber | Night Amber |
+| `danger` | Signal Red | Night Red |
 
 ## Typography
 
@@ -279,7 +306,8 @@ Steady and plain: solid, generously sized, no flourishes.
 
 ### Notices
 - **Style:** White Sheet fill, 8px radius, 16px padding, Slate text at label size, with a 3px left edge in Dress Blue for information or Caution Amber for a warning.
-- **Use:** stating where figures come from and which are still sample data.
+- **Information (Dress Blue edge):** says where figures come from, or how a feature behaves.
+- **Warning (Caution Amber edge):** something on screen the reader should not rely on, or must act on: sample data shown beside real figures (the notice at the top of Matches), a benefit the reader will not receive, overdue Plan items. A notice goes back to information once the reason is gone.
 
 ### Navigation
 - **Tab bar:** four tabs with outline icons (Matches, Plan, Profiles, Settings) on a White Sheet bar with a Khaki Rule top border. The active tab is Dress Blue; the others are Slate.
@@ -289,7 +317,7 @@ Steady and plain: solid, generously sized, no flourishes.
 A row of equal segments, 4px tall with 4px gaps, one per onboarding step. Completed steps are Dress Blue; the rest are Blotter.
 
 ### Match card (signature)
-One card per school. From top to bottom: the school name as the title with its location in Slate beneath, the cost figures in a row ("You pay (tuition)", "Paid to you", and "Net cost / yr" or "Left over / yr"; "Paid to you" is dropped when tuition is $0 because it then equals the left-over amount), a row of tags, and one row per matching degree field. Each field row is at least 48px tall, separated by a hairline Khaki Rule, with the field name in Dress Blue because it is the pressable part; pressing it opens that program's cost breakdown. A $0 tuition figure and a left-over amount are Ribbon Green. A saved program shows "★ In plan" in Brass Button at the right of its row. The reason for the match is stated once above the list when it is the same for every program, and under each field name otherwise.
+One card per school. From top to bottom: the school name as the title with its location in Slate beneath, the cost figures in a row ("You pay (tuition)", "Paid to you", and "Net cost / yr" or "Left over / yr"; "Paid to you" is dropped when tuition is $0 because it then equals the left-over amount), a row of tags, and one row per matching degree field. Each field row is at least 48px tall, separated by a hairline Khaki Rule, with the field name in Dress Blue because it is the pressable part; pressing it opens that program's cost breakdown. A $0 tuition figure and a left-over amount are Ribbon Green. A saved program shows "★ In plan" in Brass Button at the right of its row. A field suggested only because it sits close to the reader's job field, not through a direct link, carries a "Related field" tag under its name, and the line above the list says what the tag means. The reason for the match is stated once above the list when it is the same for every program, and under each field name otherwise.
 
 ### Plan progress
 On the Plan tab's first card, the segmented progress bar sits under the first-term date with one segment per step. Completed segments are Ribbon Green, following the Earned Green rule. The caption reads "2 of 4 steps done", then "All 4 steps done" in Ribbon Green when the last one is ticked.

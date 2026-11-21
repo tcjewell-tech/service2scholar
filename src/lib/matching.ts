@@ -31,6 +31,11 @@ const WEIGHTS = {
   corroboration: 0.1,
 };
 
+/** Ends every reason that came from the family fallback instead of a direct job-to-field link. */
+const RELATED = '(related field)';
+/** True when nothing but the family fallback suggested this field. */
+export const isRelatedOnly = (m: { reasons: string[] }) => m.reasons.every((r) => r.endsWith(RELATED));
+
 /** Programs scoring below this are dropped as too weak a match. */
 const MIN_SCORE = 0.3;
 /** Veteran graduation rate assumed when a school doesn't report one. */
@@ -120,7 +125,7 @@ export function fieldsForProfile(profile: Profile, repo: DataRepository): Map<st
       const families = new Set((repo.rawSocToCip?.[soc] ?? []).map(cipFamily));
       for (const { cip } of repo.cipFields) {
         if (families.has(cipFamily(cip))) {
-          add(cip, WEIGHTS.familyFallback, `${rank} ${code} (${job.title}) → ${repo.socTitles[soc] ?? soc} (related field)`);
+          add(cip, WEIGHTS.familyFallback, `${rank} ${code} (${job.title}) → ${repo.socTitles[soc] ?? soc} ${RELATED}`);
         }
       }
     }

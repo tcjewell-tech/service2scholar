@@ -61,8 +61,10 @@ export default function ProgramScreen() {
       <SectionLabel>Why it matches</SectionLabel>
       <Card>
         {match.reasons.map((r) => (
-          <ThemedText key={r} type="small">
-            • {r}
+          <ThemedText key={`${r.source}:${r.text}`} type="small">
+            • {r.text}
+            {/* This screen has no tag, so a looser match is said in words. */}
+            {r.source === 'related' ? ' (related major)' : ''}
           </ThemedText>
         ))}
         {school.veteranGradRate != null ? (

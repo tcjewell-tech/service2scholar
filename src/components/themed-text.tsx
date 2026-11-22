@@ -4,7 +4,7 @@ import { ThemeColor } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 export type ThemedTextProps = TextProps & {
-  type?: 'default' | 'small' | 'smallBold' | 'title' | 'figure';
+  type?: 'default' | 'small' | 'smallBold' | 'title' | 'figure' | 'tag';
   themeColor?: ThemeColor;
 };
 
@@ -37,6 +37,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     fontWeight: 700,
+  },
+  // The small facts under a match: "Yellow Ribbon", "Public".
+  tag: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: 500,
   },
   default: {
     fontSize: 16,

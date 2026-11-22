@@ -157,7 +157,7 @@ export default function MatchesScreen() {
               {sort === 'cost'
                 ? 'Ranked by tuition you pay, then by money left over.'
                 : 'Ranked by fit with your service and skills, weighted by graduation rate (sample data).'}
-              {sharedWhy ? ` Matched on: ${sharedWhy}` : ''}
+              {sharedWhy ? ` Matched on: ${sharedWhy}.` : ''}
               {sorted.some((c) => isRelatedOnly(c.match))
                 ? ' “Related major” degrees sit in the same academic family as your military job.'
                 : ''}

@@ -2,12 +2,16 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { Platform } from 'react-native';
 
+import { Colors } from '@/constants/theme';
 import type { CostedMatch } from '@/hooks/use-plan';
 
 import { formatUsd } from './costCalculator';
 import { formatDate } from './dates';
 import { BRANCHES, type Profile } from './profile';
 import { CATEGORY_LABEL, type ChecklistItem } from './timeline';
+
+// Paper is always white, so the plan prints in the light colours whatever the phone is set to.
+const { text, textSecondary, tint, border } = Colors.light;
 
 const esc = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -43,13 +47,13 @@ export function checklistHtml(
 
   return `<!doctype html><html><head><meta charset="utf-8">
   <style>
-    body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; color: #14202E; padding: 24px; }
+    body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; color: ${text}; padding: 24px; }
     h1 { font-size: 22px; margin: 0 0 4px; } h2 { font-size: 16px; margin: 24px 0 8px; }
-    .muted { color: #5B6573; font-size: 12px; } .link { color: #1F3A5F; font-size: 11px; }
-    table { width: 100%; border-collapse: collapse; } td, th { padding: 8px 6px; border-bottom: 1px solid #DEDAD0; vertical-align: top; font-size: 13px; text-align: left; }
+    .muted { color: ${textSecondary}; font-size: 12px; } .link { color: ${tint}; font-size: 11px; }
+    table { width: 100%; border-collapse: collapse; } td, th { padding: 8px 6px; border-bottom: 1px solid ${border}; vertical-align: top; font-size: 13px; text-align: left; }
     .box { width: 18px; font-size: 16px; } .date { width: 96px; white-space: nowrap; } .num { text-align: right; white-space: nowrap; }
-    tr.done td { color: #8A929C; } tr.done strong { text-decoration: line-through; }
-    footer { margin-top: 24px; font-size: 11px; color: #5B6573; }
+    tr.done td { color: ${textSecondary}; } tr.done strong { text-decoration: line-through; }
+    footer { margin-top: 24px; font-size: 11px; color: ${textSecondary}; }
   </style></head><body>
   <h1>${esc(profile.name)}'s transition plan</h1>
   <div class="muted">${esc(BRANCHES[profile.branch].name)} · ${profile.giBillTier}% Post-9/11 GI Bill · generated ${esc(formatDate(new Date().toISOString().slice(0, 10)))}</div>

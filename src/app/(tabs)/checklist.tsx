@@ -7,7 +7,7 @@ import { ProfileHeader } from '@/components/profile-header';
 import { ThemedText } from '@/components/themed-text';
 import { Button, Card, Chip, Notice, Progress, Row, Screen, SectionLabel } from '@/components/ui';
 import { Spacing } from '@/constants/theme';
-import { useChecklist, useCostedMatches } from '@/hooks/use-plan';
+import { useChecklist, useCostedMatches, useReconciledSavedPrograms } from '@/hooks/use-plan';
 import { useTheme } from '@/hooks/use-theme';
 import { addDays, formatDate, formatMonth, todayIso } from '@/lib/dates';
 import { checklistHtml, sharePlan } from '@/lib/exportPdf';
@@ -18,11 +18,18 @@ import { useAccount, useActiveProfile } from '@/store';
 const LEAD_OPTIONS = [30, 14, 7, 3, 1];
 const UPCOMING_DAYS = 14;
 
+/** What the Plan tab says when saved programs have dropped out of the school data. */
+function retiredProgramsNotice(count: number): string {
+  return `${count} saved ${count === 1 ? 'program is' : 'programs are'} no longer listed in the current school catalog.`;
+}
+
 export default function ChecklistScreen() {
   const profile = useActiveProfile();
   const items = useChecklist(profile);
   const costed = useCostedMatches(profile);
   const done = useAccount((s) => s.done);
+  const updateProfile = useAccount((s) => s.updateProfile);
+  const { activeKeys, orphanedKeys } = useReconciledSavedPrograms(profile);
   const theme = useTheme();
   const [showDone, setShowDone] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -59,6 +66,13 @@ export default function ChecklistScreen() {
   return (
     <Screen>
       <ProfileHeader />
+      {/* Retired programs stay saved until the reader removes them; nothing is dropped on its own. */}
+      {orphanedKeys.length > 0 ? (
+        <View style={{ gap: Spacing.two }}>
+          <Notice tone="warning">{retiredProgramsNotice(orphanedKeys.length)}</Notice>
+          <Button title="Remove from plan" variant="secondary" onPress={() => updateProfile(profile.id, { savedProgramKeys: activeKeys })} />
+        </View>
+      ) : null}
       {items.length === 0 ? (
         <Card>
           <ThemedText>Add a separation date in Profiles to build your timeline.</ThemedText>

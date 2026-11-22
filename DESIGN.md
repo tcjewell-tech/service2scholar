@@ -243,6 +243,8 @@ The values live in code. `src/constants/theme.ts` holds colour, spacing and the 
 - **Section label** (700, 12px, 0.8px letter spacing, uppercase): the heading above a group of cards, in Slate.
 - **Tag** (500, 12px, 16px line): the small facts under a match, such as "Yellow Ribbon" or "Public".
 
+Each role except Headline and Section label is a `type` on `ThemedText` (`title`, `figure`, `default`, `small`, `smallBold`, `tag`), so a screen names a role instead of setting sizes inline.
+
 ### Named Rules
 **The Two Weights Rule.** Text is medium (500) or bold (700). Bold marks a name, a figure, or a label; it is not used for emphasis inside a sentence.
 
@@ -306,8 +308,8 @@ Steady and plain: solid, generously sized, no flourishes.
 
 ### Notices
 - **Style:** White Sheet fill, 8px radius, 16px padding, Slate text at label size, with a 3px left edge in Dress Blue for information or Caution Amber for a warning.
-- **Information (Dress Blue edge):** says where figures come from, or how a feature behaves.
-- **Warning (Caution Amber edge):** something on screen the reader should not rely on, or must act on: sample data shown beside real figures (the notice at the top of Matches), a benefit the reader will not receive, overdue Plan items. A notice goes back to information once the reason is gone.
+- **Information (Dress Blue edge):** says where figures come from, or how a feature behaves. A standing note is information even when it mentions sample data, as the notice at the top of Matches does; the sample figure itself is marked where it appears (see Match card).
+- **Warning (Caution Amber edge):** kept for something that has happened to this reader and that they should act on: a benefit they will not receive, overdue Plan items, saved programs the school data no longer lists (shown on Plan with a "Remove from plan" button beneath; nothing is removed until the reader presses it). A warning disappears once the reason is gone.
 
 ### Navigation
 - **Tab bar:** four tabs with outline icons (Matches, Plan, Profiles, Settings) on a White Sheet bar with a Khaki Rule top border. The active tab is Dress Blue; the others are Slate.
@@ -317,7 +319,7 @@ Steady and plain: solid, generously sized, no flourishes.
 A row of equal segments, 4px tall with 4px gaps, one per onboarding step. Completed steps are Dress Blue; the rest are Blotter.
 
 ### Match card (signature)
-One card per school. From top to bottom: the school name as the title with its location in Slate beneath, the cost figures in a row ("You pay (tuition)", "Paid to you", and "Net cost / yr" or "Left over / yr"; "Paid to you" is dropped when tuition is $0 because it then equals the left-over amount), a row of tags, and one row per matching degree field. Each field row is at least 48px tall, separated by a hairline Khaki Rule, with the field name in Dress Blue because it is the pressable part; pressing it opens that program's cost breakdown. A $0 tuition figure and a left-over amount are Ribbon Green. A saved program shows "★ In plan" in Brass Button at the right of its row. A field suggested only because it sits close to the reader's job field, not through a direct link, carries a "Related field" tag under its name, and the line above the list says what the tag means. The reason for the match is stated once above the list when it is the same for every program, and under each field name otherwise.
+One card per school. From top to bottom: the school name as the title with its location in Slate beneath, the cost figures in a row ("You pay (tuition)", "Paid to you", and "Net cost / yr" or "Left over / yr"; "Paid to you" is dropped when tuition is $0 because it then equals the left-over amount), a row of tags, and one row per matching degree field. The graduation-rate tag reads "~62% grad rate (est.)" while those rates are sample data. Each field row is at least 48px tall, separated by a hairline Khaki Rule, with the field name in Dress Blue because it is the pressable part; pressing it opens that program's cost breakdown. A $0 tuition figure and a left-over amount are Ribbon Green. A saved program shows "★ In plan" in Brass Button at the right of its row. A field suggested only because it sits in the same academic family as the reader's military job, not through a direct link, carries a "Related major" tag under its name, and the line above the list says what the tag means: "“Related major” degrees sit in the same academic family as your military job." A field that any other reason also backs gets no tag. The reason for the match is stated once above the list when it is the same for every program, and under each field name otherwise.
 
 ### Plan progress
 On the Plan tab's first card, the segmented progress bar sits under the first-term date with one segment per step. Completed segments are Ribbon Green, following the Earned Green rule. The caption reads "2 of 4 steps done", then "All 4 steps done" in Ribbon Green when the last one is ticked.

@@ -10,14 +10,14 @@ describe('fieldsForProfile', () => {
   it('maps a primary code through O*NET SOC to degree fields', () => {
     const fields = fieldsForProfile(profile({ branch: 'army', primaryCode: '25B' }), repo);
     expect(fields.has('11.0901')).toBe(true);
-    expect(fields.get('11.0901')!.reasons[0]).toContain('25B');
+    expect(fields.get('11.0901')!.reasons[0]).toMatchObject({ source: 'direct', text: expect.stringContaining('25B') });
   });
 
   it('adds the custom crossover layer (Infantry → Leadership)', () => {
     const fields = fieldsForProfile(profile({ branch: 'army', primaryCode: '11B' }), repo);
     const leadership = fields.get('52.0213');
     expect(leadership).toBeDefined();
-    expect(leadership!.reasons.join(' ')).toMatch(/custom crossover/i);
+    expect(leadership!.reasons).toContainEqual({ source: 'crossover', text: expect.stringMatching(/custom crossover/i) });
   });
 
   it('secondary codes and KSBP text widen the field set', () => {
@@ -29,7 +29,7 @@ describe('fieldsForProfile', () => {
     expect(base.has('52.1001')).toBe(false);
     expect(wide.has('52.1001')).toBe(true); // HR from 42A
     expect(wide.has('11.0701')).toBe(true); // CS from KSBP
-    expect(wide.get('11.0701')!.reasons.join(' ')).toMatch(/coding|python/i);
+    expect(wide.get('11.0701')!.reasons).toContainEqual({ source: 'skills', text: expect.stringMatching(/coding|python/i) });
   });
 
   it('matches KSBP keywords on word boundaries only', () => {

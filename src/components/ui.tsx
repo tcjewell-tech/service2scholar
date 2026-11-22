@@ -223,6 +223,16 @@ export function Notice({ children, tone = 'info' }: { children: ReactNode; tone?
   );
 }
 
+/** A small fact on a card, such as "Public" or "Related major". Not pressable. */
+export function Tag({ text }: { text: string }) {
+  const theme = useTheme();
+  return (
+    <View style={[styles.tag, { backgroundColor: theme.backgroundSelected }]}>
+      <ThemedText type="tag">{text}</ThemedText>
+    </View>
+  );
+}
+
 export function Progress({ step, total, color }: { step: number; total: number; color?: string }) {
   const theme = useTheme();
   return (
@@ -279,6 +289,7 @@ const styles = StyleSheet.create({
   input: { borderWidth: 1, borderRadius: 10, paddingHorizontal: Spacing.three, paddingVertical: 12, fontSize: 16 },
   inputMulti: { minHeight: 110, textAlignVertical: 'top' },
   notice: { borderLeftWidth: 3, borderRadius: 8, padding: Spacing.three },
+  tag: { alignSelf: 'flex-start', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 },
   progress: { flexDirection: 'row', gap: Spacing.one },
   progressBar: { flex: 1, height: 4, borderRadius: 2 },
   row: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.two },

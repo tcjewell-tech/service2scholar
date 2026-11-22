@@ -188,7 +188,7 @@ describe('withOnet', () => {
 
   it('matches a code by the profile rank when two ranks share it', () => {
     const officer = { ...emptyProfile('self'), branch: 'army' as const, rankCategory: 'officer' as const, primaryCode: '99Z' };
-    const reasons = [...fieldsForProfile(officer, merged).values()].flatMap((f) => f.reasons).join(' ');
+    const reasons = [...fieldsForProfile(officer, merged).values()].flatMap((f) => f.reasons.map((r) => r.text)).join(' ');
     expect(reasons).toContain('Same Code, Officer');
     expect(reasons).not.toContain('New Code');
   });
@@ -212,7 +212,7 @@ describe('bundled O*NET snapshot', () => {
 
   it('applies a shorthand custom crossover to each skill level of an Air Force code', () => {
     const p = { ...emptyProfile('self'), branch: 'airforce' as const, primaryCode: '1N051' };
-    const reasons = [...fieldsForProfile(p, data).values()].flatMap((f) => f.reasons).join(' ');
+    const reasons = [...fieldsForProfile(p, data).values()].flatMap((f) => f.reasons.map((r) => r.text)).join(' ');
     expect(reasons).toContain('1N051 custom crossover');
   });
 
@@ -291,7 +291,7 @@ describe('fieldsForProfile guards and fallback', () => {
 
   it('falls back to an offered field in the same 4-digit CIP family', () => {
     expect([...fieldsForProfile(p, fallbackRepo).values()]).toEqual([
-      { cip: '11.1003', weight: 0.55, reasons: ['Primary 99Z (Test Job) → Test Occupation (related field)'] },
+      { cip: '11.1003', weight: 0.55, reasons: [{ source: 'related', text: 'Primary 99Z (Test Job) → Test Occupation' }] },
     ]);
   });
 

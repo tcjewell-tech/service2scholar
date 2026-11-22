@@ -57,5 +57,9 @@
   "private": true,
   "jest": {
     "preset": "jest-expo"
+  },
+  "allowScripts": {
+    "@parcel/watcher": false,
+    "unrs-resolver": false
   }
 }

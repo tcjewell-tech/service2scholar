@@ -209,7 +209,7 @@ A navy-and-brass palette on warm paper: restrained, legible, and not tied to any
 ### Source of truth
 The values live in code. `src/constants/theme.ts` holds colour, spacing and the content width; `src/components/themed-text.tsx` holds the text roles; `src/components/ui.tsx` holds component sizes. This document describes those values under friendlier names, and `.impeccable/design.json` is a preview copy of this document. When they disagree, the code is right.
 
-**The Code First Rule.** Change the value in code, then this document, then `.impeccable/design.json`, in the same pull request. `__tests__/designTokens-test.ts` fails when a colour, spacing step or the content width differs between the three.
+**The Code First Rule.** Change the value in code, then this document, then `.impeccable/design.json`, in the same pull request. `__tests__/designTokens.test.ts` fails when a colour, spacing step or the content width differs between the three.
 
 | In `theme.ts` | Light | Dark |
 | --- | --- | --- |

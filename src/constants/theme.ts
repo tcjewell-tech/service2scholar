@@ -1,6 +1,6 @@
 /**
  * The source of truth for colour, spacing and content width. DESIGN.md describes these values under
- * friendlier names; a test (__tests__/designTokens-test.ts) fails if the two drift apart.
+ * friendlier names; a test (__tests__/designTokens.test.ts) fails if the two drift apart.
  */
 
 export const Colors = {

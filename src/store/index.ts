@@ -3,9 +3,9 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { data, findJobCode, type DataRepository } from '@/data';
-import { parseProgramKey } from '@/lib/matching';
 import { emptyProfile, type Profile } from '@/lib/profile';
 import { defaultNotificationSettings, type NotificationSettings } from '@/lib/reminders';
+import { reconcileSavedPrograms as reconcileKeys } from '@/lib/savedPrograms';
 
 interface AccountState {
   profiles: Profile[];
@@ -68,14 +68,7 @@ export function reconcileSavedPrograms(
   savedProgramKeys: string[],
   repo: DataRepository = data
 ): { activeKeys: string[]; orphanedKeys: string[] } {
-  const activeKeys: string[] = [];
-  const orphanedKeys: string[] = [];
-  for (const key of savedProgramKeys) {
-    const parsed = parseProgramKey(key);
-    const program = parsed && repo.schools.find((s) => s.id === parsed.schoolId)?.programs.find((p) => p.cip === parsed.cip);
-    (parsed && program?.levels.includes(parsed.level) ? activeKeys : orphanedKeys).push(key);
-  }
-  return { activeKeys, orphanedKeys };
+  return reconcileKeys(savedProgramKeys, repo);
 }
 
 function toggle(list: string[], value: string): string[] {

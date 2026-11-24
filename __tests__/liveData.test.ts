@@ -12,7 +12,7 @@ import {
 } from '@/data';
 import onet from '@/data/live/onet.json';
 import { estimateCost } from '@/lib/costCalculator';
-import { fieldsForProfile } from '@/lib/matching';
+import { fieldsForProfile, isRelatedOnly } from '@/lib/matching';
 import { emptyProfile } from '@/lib/profile';
 import { migrateProfileV1ToV2, reconcileSavedPrograms } from '@/store';
 
@@ -306,7 +306,10 @@ describe('fieldsForProfile guards and fallback', () => {
     ];
     const all = data.jobCodes.map(fieldsOf);
     const reached = all.filter((f) => f.length > 0).length;
-    const related = all.filter((f) => f.some((x) => x.weight === 0.55)).length;
+    const relatedOnly = all.filter((f) => f.length > 0 && f.every(isRelatedOnly));
+    // One job's several occupations never corroborate each other, so a fallback field stays at its base weight.
+    for (const f of relatedOnly.flat()) expect(f.weight).toBe(0.55);
+    const related = relatedOnly.length;
     const pct = ((100 * reached) / all.length).toFixed(1);
     console.log(`COVERAGE ${reached} of ${all.length} job codes reach a field (${pct}%), ${related} of them only through a related field`);
     expect(reached).toBeGreaterThan(6711);

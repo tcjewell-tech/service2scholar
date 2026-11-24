@@ -87,15 +87,21 @@ function patternsFor(keywords: KsbpKeyword[]) {
 /** Degree fields suggested by a profile's job codes, KSBP text and picked interests. */
 export function fieldsForProfile(profile: Profile, repo: DataRepository): Map<string, FieldMatch> {
   const fields = new Map<string, FieldMatch>();
-  const add = (cip: string, weight: number, reason: MatchReason) => {
+  // Which independent signals reached each field. Several occupations of one job code are one signal,
+  // so they add reasons but never the corroboration bonus.
+  const origins = new Map<string, Set<string>>();
+  const add = (cip: string, weight: number, reason: MatchReason, origin: string) => {
     const existing = fields.get(cip);
     if (!existing) {
       fields.set(cip, { cip, weight, reasons: [reason] });
+      origins.set(cip, new Set([origin]));
       return;
     }
     if (existing.reasons.some((r) => r.source === reason.source && r.text === reason.text)) return;
     existing.reasons.push(reason);
-    existing.weight = Math.max(existing.weight, weight) + WEIGHTS.corroboration;
+    const seen = origins.get(cip)!;
+    existing.weight = Math.max(existing.weight, weight) + (seen.has(origin) ? 0 : WEIGHTS.corroboration);
+    seen.add(origin);
   };
 
   // A code listed as both primary and secondary counts once, so it cannot corroborate itself.
@@ -114,7 +120,7 @@ export function fieldsForProfile(profile: Profile, repo: DataRepository): Map<st
           add(cip, primary ? WEIGHTS.primaryOnet : WEIGHTS.secondaryOnet, {
             source: 'direct',
             text: `${rank} ${code} (${job.title}) → ${repo.socTitles[soc] ?? soc}`,
-          });
+          }, `job:${code}`);
         }
       }
     }
@@ -125,7 +131,7 @@ export function fieldsForProfile(profile: Profile, repo: DataRepository): Map<st
         add(cip, primary ? WEIGHTS.primaryCustom : WEIGHTS.secondaryCustom, {
           source: 'crossover',
           text: `${code} custom crossover: ${cx.note}`,
-        });
+        }, `crossover:${code}`);
       }
     }
     if (!job || direct > 0) return;
@@ -137,7 +143,7 @@ export function fieldsForProfile(profile: Profile, repo: DataRepository): Map<st
           add(cip, WEIGHTS.familyFallback, {
             source: 'related',
             text: `${rank} ${code} (${job.title}) → ${repo.socTitles[soc] ?? soc}`,
-          });
+          }, `job:${code}`);
         }
       }
     }
@@ -146,14 +152,14 @@ export function fieldsForProfile(profile: Profile, repo: DataRepository): Map<st
   if (profile.primaryCode) addCode(profile.primaryCode, true);
   for (const code of profile.secondaryCodes) addCode(code, false);
 
-  for (const cip of profile.interests) add(cip, WEIGHTS.interest, { source: 'interest', text: 'You picked this field' });
+  for (const cip of profile.interests) add(cip, WEIGHTS.interest, { source: 'interest', text: 'You picked this field' }, 'interest');
 
   const text = profile.ksbp.toLowerCase();
   if (text.trim()) {
     for (const entry of patternsFor(repo.ksbpKeywords)) {
       const hit = entry.patterns.find(([, re]) => re.test(text))?.[0];
       if (!hit) continue;
-      for (const cip of entry.cip) add(cip, WEIGHTS.ksbp, { source: 'skills', text: `Your skills mention “${hit}”` });
+      for (const cip of entry.cip) add(cip, WEIGHTS.ksbp, { source: 'skills', text: `Your skills mention “${hit}”` }, 'skills');
     }
   }
 

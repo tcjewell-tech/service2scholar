@@ -1,4 +1,4 @@
-import { seedRepository as repo } from '@/data';
+import { seedRepository as repo, type DataRepository, type JobCode } from '@/data';
 import { fieldsForProfile, matchPrograms } from '@/lib/matching';
 import { emptyProfile, type Profile } from '@/lib/profile';
 
@@ -44,6 +44,38 @@ describe('fieldsForProfile', () => {
       repo
     );
     expect([...fields.keys()]).toEqual(['51.3801']);
+  });
+
+  describe('corroboration', () => {
+    // One job code with two occupations that both link to Computer Science.
+    const job = (code: string): JobCode => ({ code, title: `Job ${code}`, branch: 'army', rankCategory: 'enlisted', soc: ['99-0001', '99-0002'] });
+    const twoSocRepo: DataRepository = {
+      ...repo,
+      jobCodes: [job('98Z'), job('99Z')],
+      jobCodeIndex: undefined,
+      customCrossover: [],
+      socTitles: { '99-0001': 'Occupation A', '99-0002': 'Occupation B' },
+      socToCip: { '99-0001': ['11.0701'], '99-0002': ['11.0701'] },
+    };
+
+    it('keeps both explanations but no bonus when one job code reaches a field twice', () => {
+      const cs = fieldsForProfile(profile({ branch: 'army', primaryCode: '99Z' }), twoSocRepo).get('11.0701')!;
+      expect(cs.reasons).toHaveLength(2);
+      expect(cs.weight).toBe(1.0);
+    });
+
+    it('still adds the bonus when a different job code backs the same field', () => {
+      const cs = fieldsForProfile(profile({ branch: 'army', primaryCode: '99Z', secondaryCodes: ['98Z'] }), twoSocRepo).get('11.0701')!;
+      expect(cs.reasons).toHaveLength(4);
+      expect(cs.weight).toBeCloseTo(1.1);
+    });
+
+    it('keeps a fallback-only field at its base weight when several occupations reach it', () => {
+      const fallbackRepo: DataRepository = { ...twoSocRepo, socToCip: {}, rawSocToCip: { '99-0001': ['11.0799'], '99-0002': ['11.0702'] } };
+      const cs = fieldsForProfile(profile({ branch: 'army', primaryCode: '99Z' }), fallbackRepo).get('11.0701')!;
+      expect(cs.reasons.map((r) => r.source)).toEqual(['related', 'related']);
+      expect(cs.weight).toBe(0.55);
+    });
   });
 });
 

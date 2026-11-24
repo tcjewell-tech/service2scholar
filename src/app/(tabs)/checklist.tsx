@@ -7,21 +7,18 @@ import { ProfileHeader } from '@/components/profile-header';
 import { ThemedText } from '@/components/themed-text';
 import { Button, Card, Chip, Notice, Progress, Row, Screen, SectionLabel } from '@/components/ui';
 import { Spacing } from '@/constants/theme';
+import { useData } from '@/data';
 import { useChecklist, useCostedMatches, useReconciledSavedPrograms } from '@/hooks/use-plan';
 import { useTheme } from '@/hooks/use-theme';
 import { addDays, formatDate, formatMonth, todayIso } from '@/lib/dates';
 import { checklistHtml, sharePlan } from '@/lib/exportPdf';
 import type { ReminderChannel } from '@/lib/reminders';
+import { retiredProgramsNotice } from '@/lib/savedPrograms';
 import { CATEGORY_LABEL, targetTermStart, type ChecklistItem } from '@/lib/timeline';
 import { useAccount, useActiveProfile } from '@/store';
 
 const LEAD_OPTIONS = [30, 14, 7, 3, 1];
 const UPCOMING_DAYS = 14;
-
-/** What the Plan tab says when saved programs have dropped out of the school data. */
-function retiredProgramsNotice(count: number): string {
-  return `${count} saved ${count === 1 ? 'program is' : 'programs are'} no longer listed in the current school catalog.`;
-}
 
 export default function ChecklistScreen() {
   const profile = useActiveProfile();
@@ -30,6 +27,7 @@ export default function ChecklistScreen() {
   const done = useAccount((s) => s.done);
   const updateProfile = useAccount((s) => s.updateProfile);
   const { activeKeys, orphanedKeys } = useReconciledSavedPrograms(profile);
+  const data = useData();
   const theme = useTheme();
   const [showDone, setShowDone] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -69,7 +67,7 @@ export default function ChecklistScreen() {
       {/* Retired programs stay saved until the reader removes them; nothing is dropped on its own. */}
       {orphanedKeys.length > 0 ? (
         <View style={{ gap: Spacing.two }}>
-          <Notice tone="warning">{retiredProgramsNotice(orphanedKeys.length)}</Notice>
+          <Notice tone="warning">{retiredProgramsNotice(orphanedKeys, data)}</Notice>
           <Button title="Remove from plan" variant="secondary" onPress={() => updateProfile(profile.id, { savedProgramKeys: activeKeys })} />
         </View>
       ) : null}

@@ -51,6 +51,39 @@ describe('buildChecklist', () => {
     expect(items.some((i) => i.category === 'yellowRibbon')).toBe(false);
   });
 
+  it('makes no school items for a saved program the school no longer offers', () => {
+    const retired = programKey('syracuse', '99.9999', 'bachelor');
+    const items = buildChecklist(profile({ savedProgramKeys: [retired] }), repo);
+    expect(items.filter((i) => /:(app|transcripts|yr):|:sco$/.test(i.id))).toEqual([]);
+  });
+
+  describe('Yellow Ribbon by the saved program’s level', () => {
+    const syracuse = repo.schools.find((s) => s.id === 'syracuse')!;
+    // Offers both levels, but its Yellow Ribbon agreement covers master’s only.
+    const masterOnlyYr = {
+      ...repo,
+      schools: [
+        {
+          ...syracuse,
+          programs: [{ cip: '11.0701', levels: ['bachelor' as const, 'master' as const] }],
+          yellowRibbon: { ...syracuse.yellowRibbon, participates: true, levels: ['master' as const] },
+        },
+      ],
+    };
+    const hasYr = (level: 'bachelor' | 'master', degreeLevel: 'bachelor' | 'master') =>
+      buildChecklist(profile({ degreeLevel, savedProgramKeys: [programKey('syracuse', '11.0701', level)] }), masterOnlyYr).some(
+        (i) => i.id === 'p1:yr:syracuse'
+      );
+
+    it('adds the item for a saved master’s even when the profile is set to bachelor’s', () => {
+      expect(hasYr('master', 'bachelor')).toBe(true);
+    });
+
+    it('skips it for a saved bachelor’s even when the profile is set to master’s', () => {
+      expect(hasYr('bachelor', 'master')).toBe(false);
+    });
+  });
+
   it('adds planned scholarship deadlines before the term and VA appointments', () => {
     const items = buildChecklist(
       profile({

@@ -172,7 +172,12 @@ export function withOnet(repo: DataRepository, live: OnetSnapshot): DataReposito
 export const schoolDataAsOf = gids.fetchedAt;
 export const data = withOnet(withGids(seedRepository, gids as GidsSnapshot), onet as unknown as OnetSnapshot);
 
-/** Where screens and hooks read the data. Today it is the bundled snapshot; a server-backed source can replace it here. */
-export function useData(): DataRepository {
+/** Where code outside React reads the data. Today it is the bundled snapshot; a server-backed source can replace it here. */
+export function getData(): DataRepository {
   return data;
+}
+
+/** Where screens and hooks read the data. */
+export function useData(): DataRepository {
+  return getData();
 }

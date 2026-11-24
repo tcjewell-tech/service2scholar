@@ -6,6 +6,7 @@ import { createRoot, type TestInstance } from 'test-renderer';
 
 import ChecklistScreen from '@/app/(tabs)/checklist';
 import MatchesScreen from '@/app/(tabs)/matches';
+import ProgramScreen from '@/app/program/[key]';
 import { SchoolCard } from '@/components/school-card';
 import { ThemedText } from '@/components/themed-text';
 import { Colors } from '@/constants/theme';
@@ -27,7 +28,12 @@ jest.mock('react-native-reanimated', () => {
     ZoomIn: preset,
   };
 });
-jest.mock('expo-router', () => ({ Link: ({ children }: { children: ReactElement }) => children }));
+let mockProgramKey = '';
+jest.mock('expo-router', () => ({
+  Link: ({ children }: { children: ReactElement }) => children,
+  Stack: { Screen: () => null },
+  useLocalSearchParams: () => ({ key: mockProgramKey }),
+}));
 jest.mock('expo-web-browser', () => ({}));
 jest.mock('react-native-safe-area-context', () => ({ useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }) }));
 jest.mock('@react-native-async-storage/async-storage', () =>
@@ -39,8 +45,13 @@ jest.mock('@/lib/exportPdf', () => ({}));
 // Matches gets hand-built programs; everything else in the module, including saved-program reconciliation, is real.
 jest.mock('@/hooks/use-plan', () => ({ ...jest.requireActual('@/hooks/use-plan'), useCostedMatches: jest.fn(() => []) }));
 
+// Unmounted after each test, so a later test's store update cannot re-render an earlier tree outside act().
+const mounted: ReturnType<typeof createRoot>[] = [];
+afterEach(() => act(() => mounted.splice(0).forEach((root) => root.unmount())));
+
 async function render(element: ReactElement) {
   const root = createRoot();
+  mounted.push(root);
   await act(async () => root.render(element));
   return root.container;
 }
@@ -186,5 +197,35 @@ describe('Plan screen', () => {
   it('says nothing when every saved program is still listed', async () => {
     seedProfile([listed]);
     expect(notices(await render(<ChecklistScreen />))).toHaveLength(0);
+  });
+
+  it('names each retired program in the warning', async () => {
+    seedProfile([`${school.id}:99.9999:master`]);
+    expect(textOf(notices(await render(<ChecklistScreen />))[0])).toContain(`(master’s) at ${school.name}`);
+  });
+});
+
+describe('Program screen', () => {
+  const school = data.schools[0];
+  const key = programKey(school.id, school.programs[0].cip, school.programs[0].levels[0]);
+  const removeButtons = (tree: TestInstance) =>
+    tree.queryAll((n) => typeof n.props.onClick === 'function' && /remove from plan/i.test(textOf(n)));
+
+  it('lets a saved program that no longer matches be removed', async () => {
+    mockProgramKey = key;
+    // A profile with no job codes or interests matches nothing, so the saved program is not a current match.
+    const saved = seedProfile([key]);
+    const tree = await render(<ProgramScreen />);
+
+    const [remove] = removeButtons(tree);
+    await act(async () => remove.props.onClick({}));
+    expect(saved()).toEqual([]);
+    expect(removeButtons(tree)).toHaveLength(0);
+  });
+
+  it('offers no action for a program that is neither matched nor saved', async () => {
+    mockProgramKey = key;
+    seedProfile([]);
+    expect(removeButtons(await render(<ProgramScreen />))).toHaveLength(0);
   });
 });

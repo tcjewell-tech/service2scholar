@@ -28,10 +28,23 @@ export default function ProgramScreen() {
   );
 
   if (!profile || !match) {
+    // A saved program can stop matching (degree level or online setting changed, or the data dropped it); it must still be removable.
+    const savedKey = profile && key && profile.savedProgramKeys.includes(key) ? key : null;
     return (
-      <Screen>
+      <Screen
+        footer={
+          profile && savedKey ? (
+            <Button title="Remove from plan" variant="secondary" onPress={() => toggleSaved(profile.id, savedKey)} />
+          ) : undefined
+        }>
         <Stack.Screen options={{ title: 'Program' }} />
         <ThemedText>This program isn’t in the current profile’s matches.</ThemedText>
+        {savedKey ? (
+          <ThemedText themeColor="textSecondary">
+            It’s still saved in your plan. It may have stopped matching because your degree level or online setting changed,
+            or because the school no longer lists it.
+          </ThemedText>
+        ) : null}
       </Screen>
     );
   }

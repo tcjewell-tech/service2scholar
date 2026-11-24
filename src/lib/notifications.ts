@@ -2,7 +2,7 @@ import * as Notifications from 'expo-notifications';
 import { useEffect } from 'react';
 import { Platform } from 'react-native';
 
-import { data } from '@/data';
+import { getData } from '@/data';
 import { useAccount } from '@/store';
 
 import { planReminders } from './reminders';
@@ -38,19 +38,22 @@ async function ensurePermission(): Promise<boolean> {
 /** Replace every scheduled local notification with a fresh plan from current state. */
 export async function syncReminders(): Promise<number> {
   const { profiles, done, notifications } = useAccount.getState();
-  const items = profiles.flatMap((p) => buildChecklist(p, data));
+  const repo = getData();
+  const items = profiles.flatMap((p) => buildChecklist(p, repo));
   const plan = planReminders(items, done, notifications, new Date());
 
   await Notifications.cancelAllScheduledNotificationsAsync();
   if (plan.length === 0 || !(await ensurePermission())) return 0;
 
-  for (const r of plan) {
-    await Notifications.scheduleNotificationAsync({
-      identifier: r.id,
-      content: { title: r.title, body: r.body, data: { itemId: r.itemId, profileId: r.profileId } },
-      trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: r.at, channelId: CHANNEL_ID },
-    });
-  }
+  await Promise.all(
+    plan.map((r) =>
+      Notifications.scheduleNotificationAsync({
+        identifier: r.id,
+        content: { title: r.title, body: r.body, data: { itemId: r.itemId, profileId: r.profileId } },
+        trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: r.at, channelId: CHANNEL_ID },
+      })
+    )
+  );
   return plan.length;
 }
 

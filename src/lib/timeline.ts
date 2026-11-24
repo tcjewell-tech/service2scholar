@@ -1,8 +1,9 @@
-import type { DataRepository } from '@/data';
+import type { DataRepository, DegreeLevel } from '@/data';
 
 import { addDays, parseIso } from './dates';
 import { parseProgramKey } from './matching';
 import type { Profile } from './profile';
+import { reconcileSavedPrograms } from './savedPrograms';
 
 export type ChecklistCategory =
   | 'application'
@@ -113,13 +114,17 @@ export function buildChecklist(profile: Profile, repo: DataRepository): Checklis
   });
 
   const latestDeadline = addDays(term, -30);
+  // Retired programs make no items; the Plan tab warns about them instead. One set of items per school.
+  const levelsBySchool = new Map<string, Set<DegreeLevel>>();
+  for (const key of reconcileSavedPrograms(profile.savedProgramKeys, repo).activeKeys) {
+    const { schoolId, level } = parseProgramKey(key)!;
+    levelsBySchool.set(schoolId, (levelsBySchool.get(schoolId) ?? new Set<DegreeLevel>()).add(level));
+  }
   const seenSchools = new Set<string>();
-  for (const key of profile.savedProgramKeys) {
-    const schoolId = parseProgramKey(key)?.schoolId;
-    if (!schoolId || seenSchools.has(schoolId)) continue;
-    seenSchools.add(schoolId);
+  for (const [schoolId, levels] of levelsBySchool) {
     const school = repo.schools.find((s) => s.id === schoolId);
     if (!school) continue;
+    seenSchools.add(schoolId);
 
     const appDue = lastOccurrence(school.appDeadline, latestDeadline);
     items.push({
@@ -146,7 +151,7 @@ export function buildChecklist(profile: Profile, repo: DataRepository): Checklis
     const canUseYr =
       profile.giBillTier === 100 &&
       school.yellowRibbon.participates &&
-      school.yellowRibbon.levels.includes(profile.degreeLevel) &&
+      [...levels].some((l) => school.yellowRibbon.levels.includes(l)) &&
       !(profile.beneficiary === 'spouse' && profile.sponsorOnActiveDuty);
     if (canUseYr) {
       items.push({
